@@ -1,0 +1,55 @@
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# Alias definitions.
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# stuff that could go in alias file above
+export shortcut=/root/filepath/
+alias ll="ls -lhaG"
+alias ww="ls -l | wc -l"
+
+# qlogin
+ql() {
+    MEM=${1:-10};
+    TIME=${2:-8:00:00};
+    THREAD=${3:-2};
+    Q=${4:-"i.q"};
+    PROJECT=${4:-"proj_flag"};
+    qlogin -P $PROJECT -l m_mem_free="${MEM}G" -l fthread=$THREAD -l h_rt=$TIME -q $Q -now no -l archive=True
+}
+
+# launch Rstudio
+rstudio() {
+    THREAD=${1:-8};
+    MEM=${2:-200};
+    PROJECT=${3:-"proj_flag"};
+    Q=${4:-"i"};
+    VERSION=${5:-"/root/singularity-images/rstudio/latest.img"};
+    sh /root/singularity-images/rstudio/shells/jpy_rstudio_qsub_script.sh -i $VERSION -f $THREAD -m "${MEM}G" -P $PROJECT -q $Q -p PORT -a -t rstudio;
+}
+
+# default file permissions to 775
+umask 002

@@ -1,0 +1,807 @@
+%\documentclass[10pt,landscape]{article}
+\documentclass[paper=a4,fontsize=2.89mm]{scrartcl}
+
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsmath,amssymb,amsthm}
+
+\linespread{0.5}
+
+
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\Prob}{P}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\mse}{MSE}
+\DeclareMathOperator{\Span}{span}
+
+\newcommand\given[1][]{\:#1\vert\:}
+\newcommand{\ind}{\stackrel{\text{ind}}{\sim}}
+\newcommand{\iid}{\stackrel{\text{iid}}{\sim}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand\abs[1]{\left| #1 \right|}
+\newcommand\norm[1]{\left\lVert #1 \right\rVert}
+\newcommand\inner[1]{\left\langle #1 \right\rangle}
+\newcommand\set[1]{\left\{\, #1 \,\right\}}
+
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\brho}{\boldsymbol{\rho}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bGamma}{\boldsymbol{\Gamma}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+
+% To make this come out properly in landscape mode, do one of the following
+% 1.
+%  pdflatex latexsheet.tex
+%
+% 2.
+%  latex latexsheet.tex
+%  dvips -P pdf  -t landscape latexsheet.dvi
+%  ps2pdf latexsheet.ps
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.01in,left=.01in,right=.1in,bottom=.1in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+	}
+
+% Turn off header and footer
+\pagestyle{empty}
+ 
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.01ex}
+
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+
+\raggedright
+\scriptsize
+\begin{multicols}{3}
+
+
+% multicol parameters
+% These lengths are set only within the two main columns
+%\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{.05pt}
+\setlength{\postmulticols}{.05pt}
+\setlength{\multicolsep}{.05pt}
+\setlength{\columnsep}{.05pt}
+
+\subsection*{Covariance, Correlation Formulas}
+\begin{align*}
+&  \text{Cov}(a_0 + \sum_{j=1}^pa_jX_j, b_0 + \sum_{k=1}^qb_kY_k) = \sum_{j=1}^p\sum_{k=1}^1 a_jb_k\text{Cov}(X_j, Y_k) \\
+& \text{Corr}(X, Y) = \frac{\Cov(X, Y)}{\sqrt{\Var(X)\Var(Y)}}, \quad X, Y \in L_2
+\end{align*}
+
+\subsection*{Times Series Data Features}
+\begin{itemize}
+\item Trend: mean/tendency. \\
+\item Periodicity: repetition in pattern. \\
+\item Seasonality: periodicity w/ known period. \\
+\item Heteroskedasticity: non-constant variance. \\
+\item Dependence: successive observations are similar/dissimilar. \\
+\item Other: missing data, structural breaks, outliers. \\
+\end{itemize}
+
+\subsection*{Stationarity}
+\begin{itemize}
+\item Strong (SS): joint pdf/pmf invariant w/ time. \\
+\item Weak (WS): $1^\text{st}, 2^\text{nd}$ moments invariant w/ time. \\
+\item SS + $\Var < \infty \implies$ WS. \\
+\item WS + jointly Guassian $\implies$ SS. \\
+\end{itemize}
+
+\subsection*{White Noise (WN)}
+$\set{Z_t} \sim WN(0, \sigma^2)$ means that $\E(Z_t) = 0, ~ \Var(Z_t) = \sigma^2 ~\forall t \in \Z$ and $\Cov(Z_i, Z_j) = 0 ~\forall i \ne j$.
+
+\subsection*{Autocovariance Function (ACVF)}
+For WS $\set{X_t}$, the ACVF $\gamma: \Z \to \R$ is $\gamma(h) = \Cov(X_t, X_{t+h}).$\\
+Properties:
+\begin{enumerate}
+\item $\gamma(0) = \Var(X_t), ~\forall t \in \Z$, \\
+\item By the Cauchy-Schwarz inequality,
+	\begin{align*}
+		\abs{\gamma(h)} 
+		= \abs{\Cov(X_t, X_{t+h})} 
+		\le \sqrt{\Var(X_t)\Var(X_{t+h})} = \gamma(0).
+	\end{align*}
+\item Even: $\gamma(-h) = \gamma(h), ~\forall h \in \Z$. \\
+\item Non-negative definite: $\forall n, ~ \mathbf{a} \in \R^n, ~ \mathbf{t} \in \Z^n$,
+$$\sum_{j=1}^n\sum_{i=1}^n a_i a_j \gamma(t_i - t_j) \ge 0.$$
+\end{enumerate}
+
+Estimate by sample ACVF:
+$$\hat{\gamma}(h) = \frac{1}{n}\sum_{t=1}^{n-\abs{h}}(x_t - \bar{x}_n)(x_{t+\abs{h}} - \bar{x}_n), ~\forall \abs{h} < n.$$
+
+\subsection*{Autocorrelation Function (ACF)}
+For WS $\set{X_t}$, the ACF $\gamma: \Z \to [-1,1]$ is $\rho(h) = \frac{\gamma(h)}{\gamma(0)}.$ \\
+Estimate by sample ACF:
+$$\hat{\rho}(h) = \frac{\hat{\gamma}(h)}{\hat{\gamma}(0)}, ~\forall \abs{h} < n.$$
+Under mild conditions,
+$$\hat{\brho}_h = \big(\hat{\rho}(1), \hat{\rho}(2), \dots, \hat{\rho}(h)\big)' \approx \mathcal{N}\left(\brho_h, \frac{1}{n}\mathbf{W}\right),$$
+where the elements of $\mathbf{W} = [w_{ij}]_{i,j = 1, \dots, h}$ are
+\begin{align*}
+&w_{ij} = \sum_{k=1}^\infty \left\{ \rho(k+i) + \rho(k-i) - 2\rho(k)\rho(i)\right\} \\\ 
+&\quad\quad \quad\times \left\{ \rho(k+j) + \rho(k-j) - 2\rho(k)\rho(j)\right\} .
+\end{align*}
+
+\subsection*{Bartlett Bounds for sample ACF}
+When $\set{X_t} \iid (\mu, \sigma^2)$, $\rho(h) = 0 ~\forall h \ne 0$. In the formula above,
+$$w_{ij} = \sum_{k=1}^\infty \rho(k-i)\rho(k-j) = 
+\left\{ \begin{array}{rl}
+ 0&\mbox{ if $i=j$} \\
+ 1 &\mbox{ otherwise}
+       \end{array} \right.$$
+Then $$\hat{\brho}_h \approx \mathcal{N}\left(\mathbf{0}_h, \frac{1}{n}\mathbf{I}_{h\times h}\right)$$
+and an approximate CI for $\rho(k)$ (``Bartlett Bounds'') is $$\hat{\rho}(k) \pm z_{1-\alpha/2}/\sqrt{n}.$$
+
+\subsection*{Classical Decomposition}
+$$X_t = m_t + s_t + I_t,$$
+where $m_t$ allows for trend, $s_t$ allows for seasonality, and $I_t$ is the irregular/random part.
+
+\subsection*{Removing Trend}
+\begin{itemize}
+
+\item Linear filter (estimate $m_t$): \\
+Pick $q \in \Z^+$ and a filter $\set{a_{-q}, \dots, a_0, \dots, a_1}$. Then $\hat{m}_t = \sum_{k=-q}^qa_kX_{t-k}.$\\
+E.g., for a sample moving average, take $a_k = 1 / (2q+1)$, so that (in absence of seasonality)
+$$\hat{m}_t = \sum_{k=-q}^q\frac{X_{t-k}}{2q+1} = 
+\underbrace{\sum_{k=-q}^q\frac{m_{t-k}}{2q+1}}_{\mbox{$q \downarrow  \implies \downarrow$ bias}} + 
+\underbrace{\sum_{k=-q}^q\frac{I_{t-k}}{2q+1}}_{\mbox{$q \uparrow \implies \downarrow$ variance}}.$$
+
+\item Exponential smoothing (estimate $m_t$): \\
+Pick $a \in (0,1)$ and set
+\begin{align*}
+\hat{m}_1 &= X_1, \\
+\hat{m}_t &= aX_t + (1-a)\hat{m}_{t-1} \\
+&= aX_t + a(1-a)X_{t-1} + a(1-a)^2X_{t-2} + \dots. 
+\end{align*}
+
+\item Differencing (eliminate $m_t$): \\
+Apply difference operator $1-B$, where $B$ is the backshift operator: $B^kf(t) = f(t-k)$. \\
+E.g., to kill linear trend $m_t = \alpha + \beta t$ use $(1-B)m_t = \beta.$ \\
+E.g., to kill quadratic trend $m_t = \alpha + \beta t + \gamma t^2$ use $(1-B)(1-B)m_t.$
+\end{itemize}
+
+
+\subsection*{Removing Seasonality (period $d$)}
+\begin{itemize}
+
+\item Smoothing/filtering: $Y_t = \sum_{j=1}^{d-1}\frac{X_{t-j}}{d}$. \\
+\item Seasonal differencing: $1-B^d$.\\
+\item Regression w/ dummy variables or trig polynomials: use to estimate $s_t$ where $s_t = s_{t+d} = s_{t+2d} = \dots$ and $\sum_{j=1}^{d-1}s_{t-j} = 0$. Model as a linear combo of oscillating functions:
+$$s_t = \sum_{j=1}^{\lfloor{d/2}\rfloor} \set{a_j \cos(\lambda_j t) + b_j \sin(\lambda_j t)}$$ for frequencies $\lambda_j = \frac{2\pi j}{d}$.
+
+\end{itemize}
+
+\subsection*{Tests for WN}
+\begin{itemize}
+
+\item Ljung-Box: reject $H_0: \set{X_t} \sim WN(0,\sigma^2)$ if $Q_{LB} > \chi^2_{h,1-\alpha}$, where
+$$Q_{LB} = n(n+2)\sum_{k=1}^h\frac{\big[\hat{\rho}_X(k)\big]^2}{n-k} \stackrel{H_0}{\approx}\chi^2_n.$$
+
+\item McLeod-Li: reject $H_0: \set{X_t} \iid \mathcal{N}(0,\sigma^2)$ if $Q_{ML} > \chi^2_{h,1-\alpha}$, where
+$$Q_{ML} = n(n+2)\sum_{k=1}^h\frac{\big[\hat{\rho}_{X^2}(k)\big]^2}{n-k} \stackrel{H_0}{\approx}\chi^2_n.$$
+
+\item Tests for $iid$ (randomness) based on ranks: let $R_i =$ rank of $X_i$, $i=1,\dots,n$.
+	\begin{itemize}
+	\item Turning point: $T = \#$ of $i$ where ranks jump up then down or vice versa.
+	\item Positive differences: $S = \#$ of $i$ where $R_{i-1} < R_i$.
+	\item Positive pairs: $P = \#$ of $(i,j)$ where $R_j > R_i$.
+	\end{itemize}
+For continuous $iid$ data,
+	\begin{itemize}
+	\item $\E(T) = \frac{2}{3}(n-2), \quad \Var(T) = \frac{16n-29}{90}$.
+	\item $\E(S) = \frac{1}{2}(n-1), \quad \Var(S) = \frac{n+1}{12}$.
+	\item $\E(T) = \frac{n(n-1)}{4}, \quad \Var(T) = \frac{n(n-1)(2n+5)}{72}$.
+	\end{itemize}
+Reject $H_0: \set{X_t} iid$ if $\abs{\frac{\text{test stat - mean}}{\sqrt{\Var}}} > z_{1-\alpha/2}.$
+\end{itemize}
+
+\subsection*{Best MSE Prediction}
+To predict $X_{n+h} \given X_1, \dots, X_n$ by minimizing MSE criterion
+$$\mse(\tilde{X}_{n+h}) = \E(X_{n+h} - \tilde{X}_{n+h})^2,$$
+use $$\hat{X}_{n+h} = \E(X_{n+h} \given X_1, \dots, X_n).$$
+Assume $$\begin{pmatrix} X_{n+h} \\ X_n \\ \vdots \\ X_1 \end{pmatrix}
+\sim \mathcal{N}\left(
+\begin{pmatrix} \mu \\ \mu\\ \vdots \\ \mu \end{pmatrix},
+\begin{pmatrix} \gamma(0) & \bgamma'(h) \\
+\bgamma(h) & \bGamma_n \end{pmatrix}
+\right),$$ where
+\begin{align*}
+\bgamma(h) &= \Cov\left( X_{n+h}, \begin{pmatrix} X_n \\ \vdots \\ X_1 \end{pmatrix} \right) = \begin{pmatrix} \gamma(h) \\ \vdots \\ \gamma(n+h-1) \end{pmatrix} \\
+\bGamma_n& = \Var\begin{pmatrix} X_n \\ \vdots \\ X_1 \end{pmatrix} = [\gamma(i-j)]_{i,j = 1, \dots, n}.
+\end{align*}
+Then the best MSE predictor (and best linear predictor) is
+$$\hat{X}_{n+h} = \mu + \bgamma'(h)\bGamma_n^{-1}\begin{pmatrix} X_n - \mu \\ \vdots \\ X_1 - \mu \end{pmatrix},$$
+$$\mse(\hat{X}_{n+h}) = \E(X_{n+h} - \hat{X}_{n+h})^2 = \gamma(0) - \bgamma'(h)\bGamma_n^{-1}\bgamma(h).$$
+
+
+\subsection*{Projection Theorem}
+Let $X_{n+h} \in L_2 = \set{\text{ all r.v.'s with $\Var < \infty$}}$ and $\mathcal{M} = \Span\set{1, X_1, \dots, X_n} \subset L_2$. Then
+\begin{enumerate}
+\item $\exists$ a unique $P_nX_{n+h} \in \mathcal{M}$ such that
+$$\norm{X_{n+h} - P_nX_{n+h}} = \inf_{Z \in \mathcal{M}}\norm{X_{n+h}-Z}.$$
+\item Residuals are orthogonal:
+$$\tilde{X}_{n+h} = P_nX_{n+h} \iff \tilde{X}_{n+h} \in \mathcal{M},~ X_{n+h} - \tilde{X}_{n+h} \perp \mathcal{M},$$ 
+i.e., for the inner product $\langle X,Y\rangle = \E(XY)$,
+\begin{align*}
+&\langle X_{n+h} - \tilde{X}_{n+h} , 1\rangle = 0 \\
+&\langle X_{n+h} - \tilde{X}_{n+h} , X_j\rangle = 0 ~\forall j = 1, \dots n.
+\end{align*} 
+\end{enumerate}
+
+\subsection*{MSE Convergence (i.e., convergence in $L^2$)}
+\begin{align*}
+X_n \stackrel{\mse}{\longrightarrow} X 
+&\iff \norm{X_n - X}^2 = \E(X_n - X)^2 \longrightarrow 0 \text{ as } n \longrightarrow \infty \\
+&\iff \norm{X_n - X_m}^2 = \E(X_n - X_m)^2 \longrightarrow 0 \text{ as } n,m \longrightarrow \infty \\
+\end{align*}
+E.g., let $\set{X_t}$ WS with mean $\mu$ and ACVF $\gamma(h)$ satisfying $\sum_{h=-\infty}^\infty \abs{\gamma(h)} < \infty$,
+$$\bar{X}_n \stackrel{\mse}{\longrightarrow} \mu, \quad \bar{X}_n \approx \mathcal{N}\left(\mu,\frac{1}{n}\sum_{h=-\infty}^\infty \gamma(h)\right).$$
+
+\subsection*{D-L Algorithm} 
+Best linear predictor is 
+$$P_nX_{n+1} = \sum_{j=1}^n\phi_{n,j}X_{n+1-j} = \bgamma'(1)\bGamma_n^{-1} \begin{pmatrix} X_n \\ \vdots \\ X_1 \end{pmatrix}.$$
+Let $\set{X_t}$ WS with mean $0$ and ACVF $\gamma(h)$ satisfying $\gamma(0) > 0, ~ \lim_{h\to\infty}\gamma(h) = 0$,
+\begin{enumerate}
+
+\item
+Set 
+\begin{align*}
+&P_0X_1 = 0, \\ 
+&\nu_0 = \E(X_1 - P_0X_1)^2 = \gamma(0).
+\end{align*}
+
+\item
+Set 
+\begin{align*}
+&P_1X_2 = \rho(1)X_1 = \frac{\gamma(1)}{\gamma(0)}X_1 = \phi_{1,1}X_1, \\
+&\nu_1 = \E(X_2 - P_1X_2)^2  = \gamma(0) - \frac{[\gamma(1)]^2}{\gamma(0)} = \nu_0(1- \phi_{1,1}^2).
+\end{align*}
+
+\item
+For $k \ge 2$, set
+\begin{align*}
+&P_kX_{k+1}  = \sum_{j=1}^k \phi_{k,j}X_{k+1-j}, \\
+&\nu_k = \E(X_{k+1} - P_kX_{k+1})^2 = (1 - \phi^2_{k,k})\nu_{k-1},
+\end{align*}
+where
+\begin{align*}
+&\phi_{k,k} = \frac{\gamma(k) - \sum_{j=1}^{k-1}\phi_{k-1,j}\gamma(k-j)}{\nu_{k-1}}, \\
+&\begin{pmatrix} \phi_{k,1} \\ \vdots \\ \phi_{k,k-1} \end{pmatrix}
+= \begin{pmatrix} \phi_{k-1,1} \\ \vdots \\ \phi_{k-1,k-1} \end{pmatrix} - \phi_{k,k}\begin{pmatrix} \phi_{k-1,k-1} \\ \vdots \\ \phi_{k-1,1} \end{pmatrix}.
+\end{align*}
+
+\end{enumerate}
+
+\subsection*{Partial Autocorrelation Function (PACF)}
+Correlation between $X_1$ and $X_{n+1}$ after removing the effect of $X_2, \dots, X_n$:
+$$\alpha(n) = \phi_{n,n} = \Corr(X_{n+1} - P_{\mathcal{K}_1}X_{n+1}, X_1 - P_{\mathcal{K}_1}X_1),$$
+where $\mathcal{K}_1 = \Span\set{X_2, \dots, X_n}.$
+
+
+\subsection*{Filtered Processes}
+Let $\set{Z_t}$ be WS with mean zero and ACVF $\gamma_Z(h)$, and let $\psi_j \in \R ~\forall j \in \Z$ be absolutely summable (i.e., $\sum_{j=-\infty}^\infty \abs{\psi_j}<\infty$). Then
+$$X_t = \sum_{j=-\infty}^\infty\psi_jZ_{t-j} =  \left(\sum_{j=-\infty}^\infty\psi_jB^j\right)Z_t$$
+is WS with mean zero and ACVF $$\gamma_X(h) = \sum_{j=-\infty}^\infty\sum_{k=-\infty}^\infty \psi_j\psi_k\gamma_Z(h-k+j).$$
+
+\begin{itemize}
+\item Linear process: 
+if $\set{Z_t} \sim WN(0,\sigma^2)$, then
+$$\gamma_X(h) = \sum_{j=-\infty}^\infty \sum_{k=-\infty}^\infty\psi_j\psi_k\sigma^2I(h-k+j=0) = \sum_{j=-\infty}^\infty \psi_j\psi_{j+h}\sigma^2.$$
+
+\item MA($\infty$) process:
+ if $\set{Z_t} \sim WN(0,\sigma^2)$ and $\psi_j = 0 ~\forall j < 0$, then
+$$X_t = \left( \sum_{j=0}^\infty \psi_jB^j\right) Z_t = \psi_0 Z_t + \psi_1 Z_{t-1} + \psi_2 Z_{t-2} +\dots ,$$
+$$\gamma_X(h)  = \sum_{j=0}^\infty \psi_j\psi_{j+\abs{h}}\sigma^2.$$
+
+\item AR($1$) process:
+ if $\set{Z_t} \sim WN(0,\sigma^2)$ and $\abs{\phi}<1$, then $\sum_{j=0}^\infty \abs{\phi^j} = \frac{1}{1-\abs{\phi}}<\infty$ and
+$$X_t = \left( \sum_{j=0}^\infty \phi^jB^j\right) Z_t = \phi^0 Z_t + \phi^1 Z_{t-1} + \phi^2 Z_{t-2} +\dots  = Z_t + \phi X_{t-1},$$
+$$\gamma_X(h)  = \sum_{j=0}^\infty \phi^j\phi^{j+\abs{h}}\sigma^2 = \frac{\sigma^2\phi^{\abs{h}}}{1-\phi^2}.$$
+
+\item AR(p) process:
+if $\set{Z_t} \sim WN(0, \sigma^2)$ and $Z_t$ uncorrelated with $X_j$  ($j<t$), then
+$$X_t = \phi X_{t-1} + \dots + \phi_p X_{t-p} + Z_t$$ 
+has PACF
+$$\alpha(n) =  \phi_{n,n} =
+\left\{ \begin{array}{ll}
+\phi_n &\mbox{ if $n = p$} \\
+0 &\mbox{ if $n > p$}
+       \end{array} \right..$$
+\end{itemize}
+
+\subsection*{ARMA Processes}
+\begin{itemize}
+\item 
+$\set{X_t} \sim ARMA(p,q)$ for $p,q\in \Z_+$ if for any $t \in \Z$
+$$\phi(B)X_t = \theta(B)Z_t, \quad \set{Z_t} \sim WN(0, \sigma^2),$$
+where the polynomials are
+\begin{align*}
+\text{AR}: & \phi(z) = 1 - \phi_1 z - \phi_2 z^2 - \dots - \phi_pz^p, \\
+\text{MA}: & \theta(z) = 1 + \theta_1 z + \theta_2 z^2 + \dots + \theta_qz^q.
+\end{align*}
+
+\item E.g., AR(1) = ARMA(1,0): 
+\begin{align*}
+X_t& = \phi X_{t-1} + Z_t, \quad \set{Z_t} \sim WN(0,\sigma^2). \\
+&\text{AR}:  \phi(z) = 1 - \phi z, \\
+&\text{MA}:  \theta(z) = 1.
+\end{align*}
+\item E.g., MA(1) = ARMA(0,1): 
+\begin{align*}
+X_t& = Z_t + \theta Z_{t-1}, \quad \set{Z_t} \sim WN(0,\sigma^2). \\
+&\text{AR}:  \phi(z) = 1, \\
+&\text{MA}:  \theta(z) = 1 + \theta z.
+\end{align*}
+
+\item $\set{X_t}$ is WS  $\iff \phi(z)$ has no roots $z \in \C$ where $\abs{z} = 1$. \\
+
+\item $\set{X_t}$ is causal $\iff$ $z$ is a root of $\phi(z) = 0$ then $\abs{z} > 1$
+$\iff X_t = \sum_{j=0}^\infty \psi_j Z_{t-j}, ~ \forall t \in \Z$, where $\sum_{j=1}^\infty \abs{\psi_j} < \infty$ and
+$$\psi(z) = \sum_{j=0}^\infty \psi_jz^j = \frac{\theta(z)}{\phi(z)}.$$
+
+\item $\set{X_t}$ is invertible $\iff$ $z$ is a root of $\theta(z) = 0$ then $\abs{z} > 1$
+$\iff Z_t = \sum_{j=0}^\infty \pi_j Z_{t-j}, ~ \forall t \in \Z$, where $\sum_{j=1}^\infty \abs{\pi_j} < \infty$ and
+$$\pi(z) = \sum_{j=0}^\infty \pi_jz^j = \frac{\phi(z)}{\theta(z)}.$$
+
+\item E.g., ARMA(1,1): $(1-\phi B) X_t = (1 + \theta B) Z_t, \quad \set{Z_t} \sim WN(0,\sigma^2)$. \\
+Causal: $X_t = \frac{\theta(B)}{\phi(B)}Z_t = \psi(B)Z_t$, where $\psi(z) = \sum_{j=0}^\infty \psi_j z^j$ and
+\begin{align*}
+z^0: & \psi_0 = 1 \\
+z^k: & \psi_k - \psi_{k-1}\phi = 0 \implies \psi_k = \phi^{k-1}(\theta + \phi), ~k\ge1.
+\end{align*}
+Then $$\gamma_X(h) = \sum_{j=0}^\infty\psi_j\psi_{j+\abs{h}}\sigma^2 = \sigma^2\psi_{\abs{h}} + \frac{(\theta + \phi)^2\phi^{\abs{h}}}{1-\phi^2}.$$
+
+Invertible: $Z_t = \frac{\phi(B)}{\theta(B)}X_t = \pi(B)X_t$, where
+\begin{align*}
+z^0: & \pi_0 = 1 \\
+z^k: & \pi_k + \pi_{k-1}\theta = 0 \implies \pi_k = (-\theta)^{k-1}(-\theta - \phi), ~k\ge1.
+\end{align*}
+
+\end{itemize}
+
+\subsection*{Yule-Walker Equations}
+Let $m = \max\set{p, q+1}$, then
+$$\gamma(h) - \phi_1\gamma(h-1) - \dots - \phi_p\gamma(h-p) =
+\left\{ \begin{array}{ll}
+ \sigma^2\sum_{j=0}^m \theta_{j+h}\psi_j &\mbox{if $0 \le h < m$} \\
+  0 &\mbox{if $ h \ge m$}
+       \end{array} \right.,$$
+       where $\theta_0 = 1$ and $\theta_j = 0$ for $j > p$. \\ 
+       
+ For a pure AR$(p)$ process, we have
+\begin{align*}
+h = 0 & \quad \gamma(0) - \phi_1\gamma(1) - \dots - \phi_p\gamma(p) = \sigma^2 \\
+h = 1 &\quad \gamma(1) - \phi_1\gamma(0) - \dots - \phi_p\gamma(p-1) = 0 \\
+& \vdots \\
+h = p &\quad \gamma(p) - \phi_1\gamma(p-1) - \dots - \phi_p\gamma(0) = 0.
+\end{align*}
+
+\subsection*{ACVF of Causal ARMA(p,q)}
+Let $X_t = \sum_{j=0}^\infty \psi_jZ_{t-j}~\forall t \in \Z$ where $\sum_{j=1}^\infty \abs{\psi_j}<\infty, ~\set{X_t} \sim WN(0, \sigma^2).$
+
+\begin{enumerate}
+
+\item Direct: (need $\psi_0, \psi_1, \dots$). $$\gamma_X(h) = \sum_{j=0}^\infty \psi_j \psi_{j+\abs{h}}\sigma^2.$$
+
+\item Explicit, non-recursive. Find $(\psi_0, \psi_1, \dots, \psi_q)$. Compute $k$ distinct roots $\xi_1, \dots, \xi_k$ of $\phi(z) = 0$ (note $\set{X_t}$ causal $\implies \abs{\xi_i} > 1$). Then $\gamma(h) = \sum_{i=1}^k\sum_{j=0}^{r_i - 1}B_{ij}\xi_i^{-h},$ for $h \ge m - p$, where $m = \max\set{p, q+1}$ and $r_i$ is the number of repeats of the $i^\text{th}$ root. Find $\set{B_{ij}}, ~\gamma(0), \dots, \gamma(m-p-1)$ by solving $1^\text{st}$ $m$ Y-W equations:
+\begin{align*}
+h = 0 & \quad \gamma(0) - \phi_1\gamma(1) - \dots - \phi_p\gamma(p) = \sigma^2\sum_{j=0}^m \theta_j\psi_j \\
+h = 1 &\quad \gamma(1) - \phi_1\gamma(0) - \dots - \phi_p\gamma(p-1) = \sigma^2\sum_{j=0}^m \theta_{j+1}\psi_j \\
+& \vdots \\
+h = m-1 &\quad \gamma(m) - \phi_1\gamma(m-1) - \dots - \phi_p\gamma(m-p) \\ &\hspace{4cm}= \sigma^2\sum_{j=0}^m \theta_{j+m-1}\psi_j 
+\end{align*}
+
+\item Explicit, recursive.  Find $(\psi_0, \psi_1, \dots, \psi_q)$. Write down $1^\text{st}$ $p+1$ Y-W equations 
+\begin{align*}
+h = 0 &\quad \gamma(0) - \phi_1\gamma(1) - \dots - \phi_p\gamma(p) = a_1 \\
+h = 1 &\quad \gamma(1) - \phi_1\gamma(0) - \dots - \phi_p\gamma(p-1) = a_2 \\
+~& \vdots \\
+h = p &\quad \gamma(p) - \phi_1\gamma(p-1) - \dots - \phi_p\gamma(0) = a_{p+1}
+\end{align*}
+Solve for the covariances, then $\gamma(h) = \phi_1\gamma(h-1) + \dots + \phi_p\gamma(h-p)$ from Y-W equations for all $h \ge m$; solve for other covariances recursively.
+
+\end{enumerate}
+
+\subsection*{Yule-Walker Estimation for AR(p)}
+\begin{enumerate}
+\item Solve last $p$ Y-W equations for $\phi_1, \dots, \phi_p$: $\bgamma_p = \bGamma_p \bphi_p = $
+$$\begin{pmatrix}\gamma(1) \\ \gamma(2) \\ \vdots \\ \gamma(p) \end{pmatrix} =
+\begin{pmatrix}
+\gamma(0) & \gamma(1) & \hdots & \gamma(p-1) \\
+\gamma(1) & \gamma(0) & \hdots & \gamma(p-2) \\
+\vdots & \vdots & \vdots & \vdots \\
+\gamma(p-1) & \gamma(p-2) & \hdots & \gamma(0) \\
+\end{pmatrix}
+\begin{pmatrix}\phi_1 \\ \phi_2 \\ \vdots \\ \phi_p \end{pmatrix}.$$
+\item Return to $1^\text{st}$ Y-W equation $\sigma^2 = \gamma(0) - \phi_1\gamma(1) - \dots - \phi_p\gamma(p)$.
+\item Plug in $\hat{\gamma}(h)$ for $\gamma(h)$ (MME).
+\item Calculate $\hat{\bphi}_{YW} = \hat{\bGamma}_p^{-1}\hat{\bgamma}_p$.
+\end{enumerate}
+For AR(p), 
+$$\sqrt{n}(\hat{\bphi}_{YW} - \bphi_p) \stackrel{d}{\longrightarrow} \mathcal{N}(\mathbf{0}_p, \sigma^2 \bGamma_p^{-1})$$
+For AR(1), 
+$\hat{\phi}_{YW} \approx \mathcal{N}(\phi, (1-\phi^2)/n)$. \\
+For AR(2), 
+$\begin{pmatrix}\hat{\phi}_1 \\ \hat{\phi}_2 \end{pmatrix} \approx \mathcal{N}\left(\begin{pmatrix}\phi_1 \\ \phi_2 \end{pmatrix} ,  \dfrac{1}{n}
+\begin{pmatrix}
+1-\phi_2^2 & -\phi_1(1 + \phi_2) \\ -\phi_1(1 + \phi_2) & 1 - \phi_2^2
+\end{pmatrix}\right.$
+
+\subsection*{Autocovariance Generating Function (ACGF)}
+If $\set{X_t}$ is WS with ACVF $\gamma(\cdot)$, then the ACGF of $\set{X_t}$ is
+$$G(z) = \sum_{h=-\infty}^\infty \gamma(h)z^h,$$
+provided this converges for all $z\in\C$ with $r^{-1}<\abs{z}<1$ for some $\abs{r}>1$. 
+\begin{itemize}
+\item
+For $\set{Z_t} \sim WN(0,\sigma^2)$, $G(z) = \sum_{h=-\infty}^\infty\gamma(h)z^h = \gamma(0)z^0 = \sigma^2$.
+
+\item
+For a linear process with  $\set{Z_t} \sim WN(0,\sigma^2)$ and $\psi_j\in\R~\forall j\in\Z$ with $\sum_{j=-\infty}^\infty\abs{\psi_j}<\infty$,
+the ACGF of  $X_t = \sum_{j=-\infty}^\infty \psi_jZ_{t-j} = \psi(B)Z_t$ is $G(z) = \sigma^2\psi(z)\psi(z^{-1}).$ 
+
+\item
+For a filtered process $Y_t = \sum_{j=-\infty}^\infty \psi_jX_{t-j}$, where $\set{X_t}$ is WS with ACGF $G_X(z)$ and $\psi_j\in\R~\forall j\in\Z$ with $\sum_{j=-\infty}^\infty\abs{\psi_j}<\infty$, the ACGF of $\set{Y_t}$ is $G_Y(z) = G_X(z)\psi(z)\psi(z^{-1}).$ 
+
+\item
+For a filtered process $Y_t = \sum_{j=-\infty}^\infty \psi_jX_{t-j}$, where $\set{X_t}$ is WS with ACGF $G_X(z)$ and $\psi_j\in\R~\forall j\in\Z$ with $\sum_{j=-\infty}^\infty\abs{\psi_j}<\infty$, the ACGF of $\set{Y_t}$ is $G_Y(z) = G_X(z)\psi(z)\psi(z^{-1}).$ 
+
+\item
+For a WS ARMA $\set{X_t}$, we have $\phi(B)X_t = \theta(B)Z_t \implies X_t = \frac{\theta(B)}{\phi(B)}Z_t = \psi(B)Z_t$, where
+$\psi(z) = \sum_{j=-\infty}^\infty \psi_jz^j$. Then $G_X(z) = \sigma^2\psi(z)\psi(z^{-1}) = \sigma^2\dfrac{\theta(z)\theta(z^{-1})}{\phi(z)\phi(z^{-1})}.$
+
+\item
+The sum $\set{X_t}$ of  uncorrelated WS $\set{X_{1,t}}$ and $\set{X_{2,t}}$ has ACGF
+$G_X(z) = \sum_{h=-\infty}^\infty \gamma_X(h)z^h = \sum_{h=-\infty}^\infty [\gamma_{X_1}(h) + \gamma_{X_2}(h)]z^h = G_{X_1}(z) + G_{X_2}(z).$
+\end{itemize}
+\subsection*{Complex Numbers}
+For $i = \sqrt{1}$ and $\omega \in (-\pi,\pi]$ define sinusoid with frequency $\omega$:
+$$e^{it\omega} = \cos(t\omega) + i \sin(t\omega).$$
+For complex $z = a + ib \in \C$ define complex conjugate $\overline{z} = a -ib$ and modulus $\abs{z} = \sqrt{a^2+b^2} \implies \abs{z}^2 = z\overline{z}$.\\
+Since cosine is even and sin is odd, $\overline{e^{it\omega}} = e^{-it\omega}$. \\
+Inner product $\langle\mathbf{x},\mathbf{y}\rangle = \sum_{i=1}^n x_i\overline{y_i}$ defined for all $\mathbf{x}, \mathbf{y} \in \C^n$.
+
+
+\subsection*{Fourier Frequencies}
+Defined as $\omega_j = 2\pi j/n$ for all $j \in \mathcal{F}_n$ where
+$$\mathcal{F}_n = \set{-\lfloor(n-1)/2\rfloor, \dots, -1, 0, 1, \dots, \lfloor n/2 \rfloor}.$$
+For $j \in \mathcal{F}_n$, we have $\omega_j \in (-\pi, \pi]$. \\
+For odd $n$, we have $n$ frequencies:
+$$\mathcal{F}_n = \set{-(n-1)/2, \dots, -1, 0, 1, \dots,  (n-1)/2}.$$
+For even $n$, we have $n$ frequencies ($\omega_{n/2} = \pi$):
+$$\mathcal{F}_n = \set{-(n-2)/2, \dots, -1, 0, 1, \dots,  n/2}.$$
+$\set{\mathbf{e}_j:j\in\mathcal{F}_n}$ is an orthonormal basis for $\C^n$, where
+$$\mathbf{e}_j = \frac{1}{\sqrt{n}}\left(e^{i\omega_j}, e^{i2\omega_j}, \dots, e^{in\omega_j}\right) \in \C^n,$$
+meaning $\forall \mathbf{y} \in \C^n, \exists a_j$ s.t. $\mathbf{y} = \sum_{j\in\mathcal{F}_n}a_j\mathbf{e}_j$ and
+$\langle \mathbf{e}_j, \mathbf{e}_k\rangle = I(j = k \in \mathcal{F}_n).$
+
+
+\subsection*{Discrete Fourier Transform}
+For $\mathbf{X} = (X_1, \dots, X_n) \in \R^n$ it holds that
+$$\mathbf{X} = \sum_{j\in\mathcal{F}_n}d_jX_j,$$
+where $d_j = \langle \mathbf{X}, \mathbf{e}_j\rangle \in \C$, $j \in \mathcal{F}_n$. Then
+$\set{d_j =  \langle \mathbf{X}, \mathbf{e}_j\rangle:j\in\mathcal{F}_n}$ is the discrete Fourier transform of $\mathbf{X}$.
+
+\subsection*{Periodogram}
+Periodogram of $\mathbf{X}$ at frequency $\omega_j$ is
+$$I_n(\omega_j) = d_j\overline{d_j} = \abs{d_j}^2 = \abs{\langle\mathbf{X}, \mathbf{e}_j\rangle}^2 = \frac{1}{n}\abs{\sum_{t=1}^nX_te^{-it\omega_j}}^2.$$
+Properties:
+\begin{itemize}
+\item At $j = 0 \implies \omega_j = \omega_0 = 0 \implies \mathbf{e}_0 = (1,\dots,1)'/\sqrt{n}$,
+$$I_n(0) = \frac{1}{n}\abs{\sum_{t=1}^nX_t\cdot1}^2 = n(\bar{X}_n)^2.$$
+
+\item $d_j, I_n(\omega_j)$ are not affected by sample mean corrections with frequencies $\omega_j\ne0$:
+$$\langle \mathbf{X} - \bar{X}_n\sqrt{n}\mathbf{e}_0, \mathbf{e}_j\rangle = d_j - \bar{X}_n\sqrt{n}I(j=0).$$
+
+\item Symmetric: $I_n(\omega_j) = I_n(-\omega_j) =  I_n(\omega_{-j}).$
+
+\item Sum of squares total property:
+$$\sum_{t=1}^n X_t^2 = \langle \mathbf{X}, \mathbf{X} \rangle = \sum_{j\in\mathcal{F}_n}I_n(\omega_j).$$
+
+\item Related to sample ACVF:
+$$I_n(\omega_j) = \sum_{k=-(n-1)}^{n-1} \hat{\gamma}(k) e^{-ik\omega_j}.$$
+\end{itemize}
+
+\subsection*{Spectral Density}
+The spectral density of WS $\set{X_t}$ with ACVF $\gamma(\cdot)$ is
+$$f(\omega) = \frac{1}{2\pi} \sum_{k=-\infty}^\infty \gamma(k)e^{-ik\omega} = \frac{1}{2\pi}G(e^{-i\omega}), \quad \omega \in [-\pi,\pi].$$
+Properties:
+\begin{itemize}
+\item Nonnegative: $f(\omega) \ge 0, ~\omega\in[-\pi,\pi]$ (by NND of $\gamma$).
+
+\item Symmetric: $f(-\omega) = f(\omega)$.
+
+\item For any $k\in\Z$, $\int_{-\pi}^{\pi}e^{ik\omega}f(\omega)d\omega = \gamma(k).$
+\end{itemize}
+
+
+\subsection*{Obtaining Spectral Densities}
+\begin{itemize}
+\item WN: spectral density $f$ of $\set{Z_t}\sim WN(0,\sigma^2$ is
+$$f(\omega) = \frac{1}{2\pi}\sum_{k=-\infty}^\infty \gamma(k)e^{-ik\omega} = \frac{1}{2\pi}\gamma(0)e^{-i0\omega} = \frac{\sigma^2}{2\pi}, \quad \omega \in[-\pi,\pi].$$
+
+\item Filtered process: let $\set{X_t}$ be WS with ACGF $G_X(\cdot)$ and spectral density $f_X(\cdot)$. For $\psi_j\in\R~\forall j\in\Z$ with $\sum_{j=-\infty}^\infty\abs{\psi_j}<\infty$, define
+$Y_t = \sum_{j=-\infty}^\infty\psi_jX_{t-j} = \psi(B)X_t$. Then the spectral density of $\set{Y_t}$ is
+$$f_Y(\omega) = f_X(\omega)\abs{\psi(e^{i\omega})}^2, \quad \omega \in[-\pi,\pi].$$
+
+\item WS ARMA: $\phi(B)X_t = \theta(B)Z_t, ~\set{Z_t}\sim WN(0,\sigma^2)$ where $\theta(z)\ne0$ for $\abs{z}=1$.
+$$f_X(\omega) = \frac{\abs{\theta(e^{i\omega})}^2}{\abs{\phi(e^{i\omega})}^2} \frac{\sigma^2}{2\pi}, \quad \omega\in[-\pi,\pi].$$
+
+\item AR(2): $\phi(z) = 1-\phi_1z-\phi_2z^2$
+\end{itemize}
+$$f_X(\omega) = \frac{\sigma^2}{2\pi\left[ 1+\phi_1^2+\phi_2^2-2\phi_1\cos(\omega)-2\phi_2\cos(2\omega)+2\phi_1\phi_2\cos(\omega)\right]}.$$
+
+\subsection*{Power Transfer Function (PTF)}
+For WS $\set{X_t}$ and $\psi_j\in\R~\forall j\in\Z$ with $\sum_{j=-\infty}^\infty\abs{\psi_j}<\infty$, define the WS filtered process
+$Y_t = \sum_{j=-\infty}^\infty\psi_jX_{t-j} = \psi(B)X_t$. Then the PTF of $\set{Y_t}$ is $$\abs{\phi(e^{i\omega})}^2, ~\omega\in[-\pi,\pi].$$
+
+E.g., lag-$k$ difference filter $\psi(B) = 1 - B^k$ has PTF $\abs{\psi(e^{i\omega})}^2 = \abs{1-e^{i\omega k}}^2 = 2 -2\cos(\omega k)$. Then PTF is zero for $\omega = 2\pi p/k$ (for integer $p$).
+
+\subsection*{Distributional Properties of Periodogram}
+Let $\set{X_t}$ be WS with ACVF $\gamma(\cdot)$, spectral density $f(\omega) = \frac{1}{2\pi}\sum_{k=-\infty}^\infty \gamma(k)e^{-ik\omega}, ~\omega\in[-\pi,\pi]$, and periodogram
+$$I_n(\omega_j) = 
+\left\{ \begin{array}{ll}
+ n(\bar{X}_n)^2&\mbox{ if $\omega_j = 0 (j = 0)$} \\
+ \sum_{h=-(n-1)}^{(n-1)} \hat{\gamma}(h)e^{-ih\omega_j}&\mbox{ if $\omega_j \ne 0 \in \mathcal{F}_n$} \\
+       \end{array} \right.$$
+\begin{itemize}
+\item
+For $\omega = 0$ and $\E(X_t) = \mu$,
+$$\lim_{n\to\infty} \E\left[I_n(0)-n\mu^2\right] = 2\pi f(0) = \sum_{k=-\infty}^\infty\gamma(k).$$
+Hence for large $n$, $\E[I_n(0)] \approx n\mu^2 + 2\pi f(0)$.
+In the frequency domain,
+$$\bar{X}_n \approx \mathcal{N}\left(\mu, \frac{2\pi f(0)}{n}\right).$$
+For WS ARMA($p,q$) process $\set{X_t}$ with $\phi(x) \ne 0$ for $\abs{z}=1$,
+$$\bar{X}_n \approx \mathcal{N}\left(\mu, \frac{\sigma^2}{n} \frac{(1+\theta_1+\dots+\theta_q)^2}{1-\phi_1-\dots-\phi_p)^2}\right).$$
+
+\item For $\omega \in [-\pi,\pi]\setminus\set{0}$ (i.e., not just non-zero Fourier freq), it holds that
+$$\lim_{n\to\infty} \E\left[ \frac{I_n(\omega)}{2\pi} \right]= f(\omega).$$
+Hence for large $n$, $\frac{I_n(\omega)}{2\pi}$ is an unbiased estimator for $f(\omega)$.
+
+\item
+For $\set{Z_t}\iid (0,\sigma^2)$ and $\psi_j\in\R~\forall j\in\Z$ with $\sum_{j=-\infty}^\infty\abs{\psi_j}<\infty$, define the linear process $X_t = \sum_{j=-\infty}^\infty\psi_jZ_{t-j}$ with spectral density $f$. If $f(\omega) > 0$ for all $\omega \in [-\pi,\pi]$ and $0<\lambda_1 < \dots < \lambda_m < \pi$ are a set of \emph{fixed} frequencies, then
+$$\frac{1}{2\pi}I_n(\lambda_i) \approx \text{ind Exp}(f(\lambda_i)).$$
+So $$\E\left[\frac{1}{2\pi}I_n(\lambda_i)\right] \approx f(\lambda_i), \quad \Var\left[\frac{1}{2\pi}I_n(\lambda_i)\right] \approx [f(\lambda_i)]^2,$$
+and since $Y \sim \text{Exp}(\theta) \implies 2Y/\theta \sim \text{Exp}(2) \sim \chi^2_2$,
+$$\frac{1}{2\pi}I_n(\lambda_i)\frac{2}{f(\lambda_i)} \approx \chi^2_2.$$
+
+\item 
+If $\set{X_t} \iid \mathcal{N}(0,\sigma^2$, then the above results are exact for all $n$ and  all Fourier frequencies except $j = 0, n/2$:
+$$\set{\frac{I_n(\omega)}{2\pi}: \omega_j \in \mathcal{F}_n, \omega_j \not\in\set{0,\pi}}.$$
+
+\item
+Periodogram is not a consistent estimator of the spectral density: for $\lambda\in(0,\pi)$,
+$$\frac{I_n(\lambda)}{2\pi} \stackrel{d}{\to} \text{Exp}[f(\lambda)]$$
+but
+$$\frac{I_n(\lambda)}{2\pi} \stackrel{p}{\not\to} f(\lambda).$$
+Instead use window estimator of periodogram,
+$$\hat{f}(\lambda) = \sum_{\abs{k}<m_n}W_n(k)\frac{I_n(\omega_{j+k})}{2\pi},$$
+where $W_n(\cdot)$ is a weight function, $m_n$ is a bandwidth, and $\omega_j\in\mathcal{F}_n$ is closest to $\lambda$. Under some conditions, $\hat{f}(\lambda)$ will be MSE-consistent for $f(\lambda)$: as $n\to\infty$,
+$$\E[\hat{f}(\lambda)] \to f(\lambda),$$
+$$ \frac{\Cov[\hat{f}(\lambda),\hat{f}(\omega)]}{\sum_{\abs{k}\le m_n}[W_n(k)]^2} \to
+\left\{ \begin{array}{ll}
+2[f(\lambda)]^2 & \mbox{if $\lambda = \omega \in \set{0,\pi}$} \\
+1[f(\lambda)]^2 & \mbox{if $\lambda = \omega \not\in \set{0,\pi}$} \\
+0   & \mbox{if $\lambda \ne \omega$} 
+       \end{array} \right.$$
+\end{itemize}
+
+\subsection*{Least Squares Estimation for AR($p$)}
+From $X_t = \phi_1X_{t-1} + \dots + \phi_pX_{t-p} + Z_t$, given data $X_1, \dots, X_n$, use multiple regression to
+$$\text{regress } \begin{pmatrix}X_{p+1} \\ X_{p+2} \\ \vdots \\ X_n \end{pmatrix} \text{ on } 
+\begin{pmatrix}
+X_{p} & X_{p-1} & \dots & X_1 \\
+X_{p+1} & X_{p} & \dots & X_2 \\
+\vdots & \vdots & \vdots & \vdots \\
+X_{n-1} & X_{n-2} & \dots & X_{n-p} \\
+\end{pmatrix}$$
+
+\subsection*{Maximum Likelihood for ARMA}
+Model parameters are $\boldsymbol{\Psi} = (\sigma^2, \bphi, \btheta)$. Then the likelihood for the data $\mathbf{X}_n$ is, by the ``chain rule'',
+$$L(\boldsymbol{\Psi}\given\mathbf{X}_n) = P_{\boldsymbol{\Psi}}(X_n\given\mathbf{X}_{n-1}) \dots P_{\boldsymbol{\Psi}}(X_2\given X_1)P_{\boldsymbol{\Psi}}(X_1).$$
+For Gaussian WS $\set{X_t}$ with mean zero,
+$$\mathbf{X}_n = \begin{pmatrix}X_1 \\ \vdots \\ X_n\end{pmatrix} \sim \mathcal{N}\left[ 
+\begin{pmatrix}0 \\ \vdots \\ 0\end{pmatrix},
+\bGamma_n = [\gamma(i-j)]_{i,j=1,\dots,n}
+\right],$$
+where the parameters $\boldsymbol{\Psi}$ appear in $\gamma(\cdot)$. Then
+$$P_{\boldsymbol{\Psi}}(X_t\given\mathbf{X}_{t-1})  \sim \mathcal{N}\left(\E(X_t \given \mathbf{X}_{t-1}) = \hat{X}_t, \Var(X_t \given \mathbf{X}_{t-1})\right),$$
+where $\hat{X}_t = P_{t-1}X_t = \phi_{t-1,1}X_t + \dots \phi_{t-1,t-1}X_1$ is the best linear predictor of $X_t$ given $(X_1, \dots, X_{t-1}$ and the coefficients
+$$\begin{pmatrix} \phi_{t-1,1} \\ \vdots \\ \phi_{t-1,t-1}\end{pmatrix} = \bGamma_n^{-1}\begin{pmatrix} \gamma(1) \\ \vdots \\ \gamma(t-1) \end{pmatrix}$$
+depend on ARMA parameters $\bphi, \btheta$ through the ACVF $\gamma(\cdot)$ and can be obtained via the D-L algo. So,
+$$P_{\boldsymbol{\Psi}}(X_t\given\mathbf{X}_{t-1})  = (2\pi)^{-1/2}(\sigma^2 r_{t-1})^{-1/2}\exp\left[ -(X_t-\hat{X}_t)^2/(2\sigma^2r_{t-1})\right],$$
+where $\sigma^2r_{t-1} = \E(X_t-\hat{X}_t)^2 = \Var(X_t\given\mathbf{X}_{t-1})$. \\
+Profile out $\sigma^2$ to get MLE of $\sigma^2$ given $\hat{\bphi}_\text{MLE}, \hat{\btheta}_\text{MLE}$:
+$$\hat{\sigma}^2_\text{MLE} = \frac{1}{n} \sum_{t=1}^n \frac{(X_t-\hat{X}_t)^2}{r_{t-1}}.$$
+
+
+\subsection*{Distribution of ARMA MLE}
+ARMA process $\phi(B)X_t = \theta(B)Z_t,~ \set{Z_t} \sim WN(0,\sigma^2)$. 
+Define new WN process $Z^\ast_t\sim WN(0,\sigma^2)$ and new processes
+$U_t = Z^\ast_t/\phi(B) \sim \text{AR}(p)$ and $V_t = Z^\ast_t/\theta(B) \sim \text{AR}(q)$.
+Then
+$$\begin{pmatrix} \hat{\bphi}_\text{MLE} \\ \hat{\btheta}_\text{MLE} \end{pmatrix} \approx
+\mathcal{N}\left(
+\begin{pmatrix} {\bphi}_\text{MLE} \\ {\btheta}_\text{MLE} \end{pmatrix},
+\frac{\sigma^2}{n}
+\begin{pmatrix}
+\E(\mathbf{U}_p \mathbf{U}_p') & \E(\mathbf{U}_p \mathbf{V}_p') \\
+\E(\mathbf{V}_q \mathbf{U}_p') & \E(\mathbf{V}_q \mathbf{V}_q') \\
+\end{pmatrix}
+  \right),$$ where
+  $\mathbf{U}_p = (U_p, \dots, U_1)'$ and $\mathbf{V}_q = (V_q, \dots, V_1)'$.
+
+
+\subsection*{State Space Model}
+\begin{align*}
+&\underset{(w\times1)}{\mathbf{Y}_t} = \underset{(w\times v)}{\mathbf{G}_t} \underset{(v\times1)}{\mathbf{X}_t} +  \underset{(w\times 1)}{\mathbf{W}_t} && \text{(Observation Equation)} \\
+&\underset{(v\times1)}{\mathbf{X}_{t+1}} = \underset{(v\times v)}{\mathbf{F}_t} \underset{(v\times1)}{\mathbf{X}_t} +  \underset{(v\times 1)}{\mathbf{V}_t} && \text{(State Equation)}
+\end{align*}
+where
+\begin{itemize}
+\item $\set{\begin{pmatrix} \mathbf{V}_t \\ \mathbf{W}_t \end{pmatrix}}_{t\ge1}$ are uncorrelated random vectors, 
+\item $\E(\mathbf{W}_t) = \mathbf{0}_w, ~ \E(\mathbf{V}_t) = \mathbf{0}_v$, 
+\item $\Var\begin{pmatrix} \mathbf{V}_t \\ \mathbf{W}_t \end{pmatrix} = 
+\begin{pmatrix} \E(\mathbf{V}_t\mathbf{V}_t') & \E(\mathbf{V}_t\mathbf{W}_t') \\ \E(\mathbf{W}_t\mathbf{V}_t') &  \E(\mathbf{W}_t\mathbf{W}_t') \end{pmatrix} = 
+\begin{pmatrix} \mathbf{Q}_t & \mathbf{S}_t \\ \mathbf{S}_t' &  \mathbf{R}_t \end{pmatrix}$,
+\item For each $t, \mathbf{V}_t$ and $\mathbf{W}_t$ are uncorrelated with $\set{\mathbf{X}_s: s\le t}$. 
+\end{itemize}
+Note: WS $\implies$ time-invariant (but not vice versa).\\
+E.g.,
+ Random Walk + Noise
+$$Y_t = X_t + W_t, \quad X_{t+1} = X_t + V_t,$$
+for $\set{W_t} \sim WN(0,\sigma^2_w), \set{V_t} \sim WN(0,\sigma^2_v)$ are uncorrelated. Here,
+$F_t = G_t = 1, Q_t = \sigma^2_v, R_t = \sigma^2_\omega, S_t = 0$.
+
+E.g., linear model $Y_t = \mathbf{Z}'_t \boldsymbol{\beta} + W_t, ~ \set{X_t} \sim WN(0,\sigma^2)$. Then
+$\mathbf{F}_t = I_{v\times v}, \mathbf{V}_t = (0, \dots, 0)'$, and
+\begin{align*}
+&Y_t= \mathbf{Z}'_t \boldsymbol{\beta} + W_t && \text{(Observation Equation)} \\
+& \mathbf{X}_{t+1} = \boldsymbol{\beta}&& \text{(State Equation)}
+\end{align*}
+
+\subsection*{ARMA Models in State Space Form}
+AR($p$): $X_t = \phi_1 X_{t-1} + \dots + \phi_pX_{t-p} + Z_t, ~\set{Z_t} \sim WN(0,\sigma^2).$
+\begin{align*}
+&\underset{(p\times1)\mathbf{X}_{t+1}}{\begin{pmatrix} X_{t+1} \\ X_t \\ \vdots \\ X_{t+2-p} \end{pmatrix}} 
+= \underset{(p\times p)\mathbf{F}_t}{\begin{pmatrix}
+\phi_1 & \phi_2 & \dots & \phi_p \\
+1 & 0 & \dots & 0 \\
+0 & 1 & \dots & 0 \\
+\hdots & \hdots & \hdots & \hdots \\
+0 & \dots & 1 & 0 \\
+\end{pmatrix}}
+\underset{(p\times1)\mathbf{X}_t}{\begin{pmatrix} X_{t} \\ X_{t-1} \\ \vdots \\ X_{t+1-p} \end{pmatrix}}  +  
+\underset{(p\times 1)\mathbf{V}_t}{\begin{pmatrix} Z_{t+1} \\ 0 \\ \vdots \\ 0 \end{pmatrix}} && \text{(State)} \\
+&Y_t = \underset{(1\times p)\mathbf{G}_t}{\begin{pmatrix} 1 & 0 & \dots & 0 \end{pmatrix}}\mathbf{X}_t +\underset{(1\times 1)\mathbf{W}_t}{ 0 } = X_t&& \text{(Obs)}
+\end{align*}
+
+
+MA($1$): $X_t = Z_t + \theta Z_{t-1}, ~\set{Z_t} \sim WN(0,\sigma^2).$ Let
+$\underset{(2\times 1)}{\mathbf{X}_t} = \begin{pmatrix} X_{1,t} \\ X_{2,t} \end{pmatrix},$ then
+\begin{align*}
+&\mathbf{X}_{t+1}
+= \underset{(2\times 2)\mathbf{F}_t}{\begin{pmatrix}
+0 & 1 \\ 0 & 0
+\end{pmatrix}}
+\mathbf{X}_t + 
+\underset{(2\times 1)\mathbf{V}_t}{\begin{pmatrix} Z_{t+1} \\ \theta Z_{t+1} \end{pmatrix}} && \text{(State)} \\
+&Y_t = \underset{(1\times 2)\mathbf{G}_t}{\begin{pmatrix} 1 & 0 \end{pmatrix}}\mathbf{X}_t +\underset{(1\times 1)\mathbf{W}_t}{ 0 } = X_{1,t}&& \text{(Obs)}
+\end{align*}
+
+
+
+\subsection*{Co-integration}
+Real-valued $\set{Y_t} \sim I(d)$ if $\set{(1-B)^d Y_t}$ is WS but $\set{(1-B)^{d-1} Y_t}$ is not WS. \\
+Random vectors $\set{\mathbf{Y}_t} \sim I(d)$ if each component is $I(d)$. \\
+$\set{\mathbf{Y}_t} \sim I(d)$ is co-integrated with co-integrating factor $\boldsymbol{\alpha}$ is $\set{\boldsymbol{\alpha}' \mathbf{Y})t} \sim I(k)$ for some $k < d$.\\
+E.g., drunk guy and puppy example where $\set{Y}_t \sim I(d=1)$:
+\begin{align*}
+&\mathbf{Y}_t = \begin{pmatrix} d_t \\ p_t \end{pmatrix} = \begin{pmatrix} 1 \\ \gamma \end{pmatrix} d_t + \begin{pmatrix} 0 \\ w_t \end{pmatrix} && \text{(Observation Equation)} \\
+&d_{t+1} = d_t + v_t && \text{(State Equation)}
+\end{align*}
+for $\set{W_t} \sim WN(0,\sigma^2_w$, $\set{V_t} \sim WN(0,\sigma^2_v$. 
+Then $\mathbf{Y}_t$ is co-integrated with factor $\boldsymbol{\alpha} = \begin{pmatrix} \gamma \\ -1 \end{pmatrix}$ because $\boldsymbol{\alpha}' \mathbf{Y}_t = -W_t \sim I(d=0)$ is WS.
+
+\subsection*{Kalman Filter}
+$\mathbf{X}_{t|k}$ predicts $\mathbf{X}_t$ based on past observations (not states) $\mathbf{Y}_0, \mathbf{Y}_1, \dots, \mathbf{Y}_k$ with error covariance matrix for $\mathbf{X}_{t|k}$ given by
+$$\boldsymbol{\Omega}_{t|k} = \E\left[ (\mathbf{X}_t - \mathbf{X}_{t|k}) (\mathbf{X}_t - \mathbf{X}_{t|k})'\right].$$
+Goals:
+\begin{enumerate}
+\item One-step ahead prediction (predict $\mathbf{X}_t$ from $\mathbf{Y}_0, \mathbf{Y}_1,\dots,\mathbf{Y}_{t-1}$):
+$$\hat{\mathbf{X}}_t \equiv \mathbf{X}_{t|t-1}, \quad \boldsymbol{\Omega}_t \equiv \boldsymbol{\Omega}_{t|t-1}.$$
+\item Filtering (predict $\mathbf{X}_t$ from $\mathbf{Y}_0, \mathbf{Y}_1,\dots,\mathbf{Y}_{t}$):
+$$\mathbf{X}_{t|t}, \quad \boldsymbol{\Omega}_{t|t}.$$
+\item Smoothing (predict $\mathbf{X}_t$ from $\mathbf{Y}_0, \mathbf{Y}_1,\dots,\mathbf{Y}_{n}$):
+$$\mathbf{X}_{t|n}, \quad \boldsymbol{\Omega}_{t|n},  \quad t \le n.$$
+\end{enumerate}
+
+
+\subsection*{Kalman Filter Steps}
+Assume that $\mathbf{S}_t = \mathbf{0}_{w\times v}$ in Kalman Filter, $\mathbf{F}_t, \mathbf{G}_t, \mathbf{Q}_t,\mathbf{R}_t$ are known.
+\begin{enumerate}
+\item Start-up: $\hat{X}_{1|0} = \mathbf{X}_{1|0}$ (often $E(\mathbf{X}_1)$), and $\boldsymbol{\Omega}_1 = \E\left[ (\mathbf{X}_1 - \hat{\mathbf{X}}_{1}) (\mathbf{X}_1 - \hat{\mathbf{X}}_{1}) '\right].$
+\item Innovation at $t\ge1$: (new $\mathbf{Y}_t$ becomes available in addition to $\mathbf{Y}_0, \dots, \mathbf{Y}_{t-1}$)
+$$\mathbf{I}_t = \mathbf{Y}_t - \hat{\mathbf{Y}}_t = \mathbf{Y}_t - \mathbf{G}_t\hat{\mathbf{X}}_t = \mathbf{G}(\mathbf{X}_t-\hat{\mathbf{X}}_t) + \mathbf{W}_t.$$
+$$\boldsymbol{\Delta}_t = \Var(\mathbf{I}_t) = \E(\mathbf{I}_t\mathbf{I}_t') = \mathbf{G}_t\boldsymbol{\Omega}_t\mathbf{G}'_t + \mathbf{R}_t \quad (\ast)$$
+\item Filter (update) at $t\ge1$:
+$$\mathbf{X}_{t|t} = \hat{\mathbf{X}}_t + \boldsymbol{\Omega}_t\mathbf{G}_t'\boldsymbol{\Delta}_t^{-1}\mathbf{I}_t$$
+$$\boldsymbol{\Omega}_{t|t} = \boldsymbol{\Omega}_{t} - \boldsymbol{\Omega}_{t}\mathbf{G}_t'\boldsymbol{\Delta}_t^{-1}\mathbf{G}_t\boldsymbol{\Omega}_{t} \quad (\ast)$$
+Note: $\mathbf{X}_{t|t}$ is $\E(\mathbf{X}_t|\mathbf{Y}_0,\dots,\mathbf{Y}_{t})$ assuming Gaussian processes or best linear predictor.
+\item Predict at $t\ge1$: (prediction of $\mathbf{X}_{t+1}$ from $\mathbf{Y}_0,\dots,\mathbf{Y}_{t})$
+$$\hat{\mathbf{X}}_{t+1} = \mathbf{F}_t\mathbf{X}_{t|t}$$
+$$\boldsymbol{\Omega}_{t+1} = \E\left[ (\mathbf{X}_{t+1} - \hat{\mathbf{X}}_{t+t}) (\mathbf{X}_{t+1} - \hat{\mathbf{X}}_{t+t})'\right] = \mathbf{F}_t\boldsymbol{\Omega}_{t|t}\mathbf{F}_t' +\mathbf{Q}_t\quad (\ast)$$
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{multicols}
+\end{document}

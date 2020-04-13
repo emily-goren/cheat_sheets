@@ -1,0 +1,544 @@
+%\documentclass[10pt,landscape]{article}
+\documentclass[paper=letter,fontsize=2.89mm]{scrartcl}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\linespread{1}
+
+% Math Operators
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\Prob}{P}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% Math Commands 
+\newcommand\given[1][]{\:#1\vert\:}
+\newcommand{\indep}{\stackrel{\text{indep}}{\sim}}
+\newcommand{\iid}{\stackrel{\text{iid}}{\sim}}
+\newcommand{\eqdist}{\stackrel{\text{d}}{=}}
+\newcommand{\convdist}{\stackrel{\text{d}}{\longrightarrow}}
+\newcommand{\convprob}{\stackrel{\text{p}}{\longrightarrow}}
+\newcommand{\convas}{\stackrel{\text{as}}{\longrightarrow}}
+\newcommand{\convL}[1]{\stackrel{\mathcal{L}_{#1}}{\longrightarrow}}
+\newcommand{\Norm}{\mathcal{N}} 
+\newcommand{\Borel}{\mathcal{B}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand\indicate[1]{\mathbb{I}_{ #1 }}
+\newcommand\abs[1]{\left| #1 \right|}
+\newcommand\norm[1]{\left\lVert #1 \right\rVert}
+\newcommand\inner[1]{\left\langle #1 \right\rangle}
+\newcommand\set[1]{\left\{ #1 \right\}}
+
+% To make this come out properly in landscape mode, do one of the following
+% 1.
+%  pdflatex latexsheet.tex
+%
+% 2.
+%  latex latexsheet.tex
+%  dvips -P pdf  -t landscape latexsheet.dvi
+%  ps2pdf latexsheet.ps
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.1in,left=.1in,right=.25in,bottom=.2in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+	}
+
+% Turn off header and footer
+\pagestyle{empty}
+ 
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.01ex}
+
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+
+\raggedright
+\scriptsize
+\begin{multicols*}{3}
+
+
+% multicol parameters
+% These lengths are set only within the two main columns
+%\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{.05pt}
+\setlength{\postmulticols}{.05pt}
+\setlength{\multicolsep}{.05pt}
+\setlength{\columnsep}{.05pt}
+
+\subsection*{Measurable Transformations}
+$T: \Omega_1 \to \Omega_2$ is $\langle \mathcal{F}_1, \mathcal{F}_2\rangle$-mble if $T^{-1}(A) \equiv \set{\omega \in \Omega_1: T(\omega) \in A} \in \mathcal{F}_1$. \\ \medskip
+
+$T: \R \to \R \text{ is } \langle\Borel(\R), \Borel(\R)\rangle\text{-mble} \iff T^{-1}(-\infty, r) = \set{\omega \in \R: T(\omega) < r} \in \Borel(\R) ~\forall r \in \R$. \\\medskip
+
+\subsection*{Induced Measures \& Distribution Functions}
+The \textbf{distribution} of $X$ (denoted $P_X$),  is the induced measure of $X$ under $P$ on $\Borel(\R)$, i.e., 
+$P_X(A) = P(X^{-1}(A)) = P(\set{\omega \in \Omega: X(\omega) \in A}) = P(X \in A), \quad A \in \Borel(\R)$. \\ \medskip
+
+The \textbf{cumulative distribution func} (cdf) of a r.v.\@ $X$ is $F(x) = P_X((-\infty,x]) = P(X \le x), \quad x \in \R$.\\
+(1) $F$ is right continuous: if $x_n \downarrow x_0$ and $x_n \ge x$ then $F(x_n) = P_X((-\infty,x_n]) \downarrow P_X((-\infty,x_0]) = F(x_0)$ by mcfa. \\
+(2) $F$ is monotone nondecreasing: if $x \le y \implies (-\infty, x] \subset (-\infty, y]$ then $F(x) = P_X((-\infty,x]) \le P_X((-\infty,y]) =F(y)$ by monotonicity \\
+(3) $\lim_{x\to\infty} F(x) = 1$ and $\lim_{x\to-\infty} F(x) = 0$: show using argument similar to (1). \\ \medskip
+
+\subsection*{Integrals}
+For \textbf{disjoint} $A_1, A_2, \dots \in \mathcal{F}$, mble $\mu$-int $f: \Omega \to \R$,  by the DCT
+$\int_\Omega f \indicate{\bigcup_{n=1}^\infty A_n}d\mu = \sum_{n=1}^\infty \int_{A_i} f d\mu$. \\ \medskip
+
+\subsection*{Convergence Theorems}
+\textbf{MCT}: If $f_n: \Omega \to \overline{\R}$ is an increasing seq of nonneg mble funcs and $f_n(\omega) \uparrow f(\omega) \text{ a.e.}(\mu)$, then $\int_\Omega f_n d\mu \uparrow \int_\Omega f d\mu$. That is, $\int_\Omega f d\mu = \int_\Omega \lim_{n\to\infty} f_nd\mu = \lim_{n\to\infty}\int_\Omega f_nd\mu$. \\ \medskip
+
+\textbf{Fatou's Lemma}:
+If $f_n: \Omega \to \overline{\R}$ is a sequence of nonneg funcs, then $\int_\Omega \underline{\lim} f_n d\mu \le \underline{\lim}  \int_\Omega f_n d\mu.$ \\ \medskip
+
+\textbf{DCT}: 
+Suppose (1) $g: \Omega \to \overline{\R}$ is a nonneg, $\mu$-int func; (2) $\abs{f_n} \le g \text{ a.e.}(\mu) ~\forall n \ge 1$; and (3) $f_n \to f \text{ a.e.}(\mu)$. Then, $f$ is $\mu$-int and $\lim_{n\to\infty}\int_\Omega \abs{f_n - f} d\mu = 0$ and $\lim_{n\to\infty} \int_\Omega f_nd\mu = \int_\Omega fd\mu.$ \\ \medskip
+
+\emph{weaker conditions}: If $\mu(\Omega) < \infty$ and $f,f_n: \Omega \to \overline{\R}$ are mble such that $f_n \to f$ a.e.($\mu$) and $\set{f_n: n \ge1}$ is UI (see next section), then $f$ is $\mu$-int and $\lim_{n\to\infty} \int_\Omega f_nd\mu = \int_\Omega f d\mu.$ \\ \medskip
+
+\textbf{Scheffe's Theorem}: Let $\nu_n(A) = \int_A f_n d\mu ~\forall A \in \mathcal{F}$ be finite measures with densities $f_n \ge 0$ for all $n \ge 0$. If $\nu_n(\Omega) = \nu_0(\Omega) < \infty$ for all $n \ge 1$ and $f_n \to f$ a.e.($\mu$), then $\lim_{n\to\infty} \int_\Omega \abs{f_n-f_0}d\mu = 0.$ \\
+Also, $\sup_{A\in\mathcal{F}} \abs{\nu_n(A) - \nu_0(A)} =\frac{1}{2}\int_\Omega \abs{f_n - f_0}d\mu \to 0 \text{ as } n \to \infty$. \\ \medskip
+
+\subsection*{Uniform Integrability}
+If $f: \Omega \to \R$ is $\mu$-int, by the DCT $\lim_{n\to\infty}\int_{\abs{f}>n} \abs{f}d\mu = \lim_{n\to\infty}\int_\Omega \indicate{\abs{f}>n}\abs{f}d\mu=0$. \\ \medskip
+
+A family of $\mu$-int funcs $\set{f_\lambda: \lambda \in \Lambda}$ on a msp $(\Omega, \mathcal{F}, \mu)$ is \textbf{uniformly integrable} (UI) w.r.t.\@ $\mu$ if 
+$\sup_{\lambda \in \Lambda} \int_{\abs{f_\lambda}>t}\abs{f_\lambda}d\mu \to 0 \text{ as } t \to \infty$. \\ \medskip
+
+Suppose $\mathcal{A} \equiv \set{f_\lambda: \lambda \in \Lambda}$ is a collection of $\mu$-int funcs on a msp $(\Omega, \mathcal{F}, \mu)$. Then,
+(1) if $\Lambda$ is a finite set, then $\mathcal{A}$ is UI; (2) if $\exists \eps > 0$ such that $\sup\set{\int\abs{f_\lambda}^{1+\eps}d\mu:\lambda \in \Lambda} < \infty$, then $\mathcal{A}$ is UI; (3) if $\abs{f_\lambda} \le f$ a.e.($\mu$) and $\int f d\mu < \infty$, then $\mathcal{A}$ is UI; (4) if $\mathcal{A}$ is UI and $\mu(\Omega) < \infty$, then $\exists M > 0$ such that $\sup\set{\int\abs{f_\lambda}d\mu:\lambda \in \Lambda} \le M$; (5) if $\set{f_\lambda: \lambda \in \Lambda}$ and $\set{g_\lambda: \lambda \in \Lambda}$ are both UI, then $\set{f_\lambda + g_\lambda: \lambda \in \Lambda}$ is also UI.\\ \medskip
+
+\subsection*{Independence}
+$\set{A_i: i \in I} \subset \mathcal{F}$ are \textbf{indep} if $\forall i_1, \dots, i_n \in I$ distinct indices and fixed $n \in \N$,
+$P\left(\bigcap_{j=1}^n A_{i_j}\right) = \prod_{j=1}^n P\left(A_{i_j}\right),$ totalling $\sum_{k=2}^n {n \choose k} = 2^n -n -1$ indep conditions. \\ \medskip
+
+$\set{\mathcal{G}_i : i \in I}$ are \textbf{indep} if any possible collection $\set{A_i: A_i \in \mathcal{G}_i, i \in I}$ of sets are indep.  \\ \medskip
+
+$\set{X_i: ~i \in I}$ are \textbf{indep} if  $\set{\sigma\langle X_i \rangle: i \in I}$ is indep, where 
+$\sigma\langle X_i \rangle = \set{X_i^{-1}(B): B \in \Borel(\R)} = X_i^{-1} (\Borel(\R))$
+is the $\sigma$-algebra generated by $X_i$. That is, $\forall i_1, \dots, i_n \in I$ distinct indices, fixed $n \in \N$ and $\forall B_{i_1}, \dots, B_{i_n} \in \Borel(\R)$,
+$P\left(X_{i_1} \in B_{i_1}, \dots, X_{i_n} \in B_{i_n}\right) = \prod_{j=1}^n P\left(X_{i_j}\in B_{i_j}\right).$ Equivalently,
+$P\left(X_{i_1} \le x_1, \dots, X_{i_n} \le x_n \right) = \prod_{j=1}^n P\left(X_{i_j}\le x_j\right) ~ \forall x_1, \dots, x_n \in \R.$ \\ \medskip
+
+\textbf{Independence of generated $\sigma$-algebras}: If $\mathcal{G}_i \subset \mathcal{F}$ is a $\pi$-class $ \forall i \in I$ and $\set{\mathcal{G}_i: i \in I}$ is indep, then 
+$\set{\sigma\langle\mathcal{G}_i\rangle: i \in I}$ is indep. \\\medskip
+
+\subsection*{Borel-Cantelli Lemmas}
+If $A_1, A_2, \dots \in \mathcal{F}$, then
+$\overline{\lim} A_n =  \bigcap_{k=1}^\infty\bigcup_{n=k}^\infty A_n \in \mathcal{F}$ and 
+$\underline{\lim} A_n  = \bigcup_{k=1}^\infty\bigcap_{n=k}^\infty A_n \in \mathcal{F}.$
+Also, $\underline{\lim} A_n \subset \overline{\lim} A_n,$ $(\text{``$A_n$ i.o''})^c = \left(\overline{\lim}A_n\right)^c = \underline{\lim}A_n^c = \text{``$A_n^c$  eventually,''}$, and $(\text{``$A_n$ eventually''})^c = \left(\underline{\lim}A_n\right)^c  = \overline{\lim}A_n^c = \text{``$A_n^c$  i.o.''}$ by De Morgan's laws. \\ \medskip
+
+\textbf{Borel-Cantelli Lemma}: For a psp $(\Omega, \mathcal{F}, P)$ with $A_1, A_2, \dots \in \mathcal{F}$:\\
+ (1) If $\sum_{n} P(A_n) < \infty$, then $P\left( \overline{\lim} A_n\right) = P\left( A_n \text{ occurs i.o.}\right) = 0$. \\
+(2) If $\set{A_n}$ are indep and $\sum_{n} P(A_n) = \infty$, then $P\left( \overline{\lim} A_n\right) = P\left( A_n \text{ occurs i.o.}\right)  = 1$. \\ \medskip
+
+\textbf{Borel 0-1 Law}: If $A_1, A_2, \dots$ are indep events, then
+$P(\overline{\lim} A_n) = P(A_n \text{ occurs i.o.}) = 
+\left\{ \begin{array}{l}
+ 0  \iff \sum_{n} P(A_n) < \infty,\\
+ 1  \iff \sum_{n} P(A_n) = \infty.
+       \end{array} \right.$ \\ \medskip
+
+\subsection*{Tail Events \& Kolmogorov's 0-1 Law}
+The \textbf{tail $\sigma$-algebra} of $\set{X_n}_{n\ge1}$ is
+$\mathcal{T} = \bigcap_{n=1}^\infty \sigma \left\langle \set{X_j: j \ge n} \right\rangle,$
+where $ \sigma \left\langle \set{X_j: j \ge n} \right\rangle =  \sigma \left\langle \set{X_j^{-1}:B \in \Borel(\R),  j \ge n} \right\rangle$ is the $\sigma$-algebra generated by $X_j, j \ge n$. Any set (event) $A \in \mathcal{T}$ is a \textbf{tail event}. \\\medskip
+
+A r.v.\@ $T: \Omega \to \overline{\R}$ is a \textbf{tail r.v.\@} if $T$ is $\langle \mathcal{F}, \Borel(\overline{\R})\rangle$-mble, e.g., $T^{-1}(B) \in \mathcal{F} ~\forall B \in \Borel(\R)$. \\ \medskip
+
+\textbf{Kolmogorov's 0-1 Law}: If $\set{X_n}_{n\ge1}$ are indep and $A \in \mathcal{T}$, then $P(A) \in \set{0,1}$. \\\medskip
+
+\textbf{Corollary}: All tail r.v.'s are degenerate. That is, $T \in \mathcal{T} \implies \exists c \in \overline{\R}$ such that $P(T = c) = 1$. E.g, $\overline{\lim} S_n/a_n$ and $\underline{\lim}S_n/a_n$ are degenerate if $a_n \to \infty$. \\ \medskip
+
+\subsection*{Convergence}
+$X_1, X_2, \dots$ \textbf{converge almost surely} to $X_0$ on $(\Omega, \mathcal{F}, P)$ if
+$P\left(\set{\lim_{n\to\infty} X_n(\omega) = X_0(\omega)}\right) = 1.$ \\ 
+TFAE: \\
+(1) $X_n \convas 0$, \\
+(2) $P(\abs{X_n} > \eps \text{ i.o}) = 0, \quad \forall \eps > 0$, \\
+(3) $P(\abs{X_n} > 1/k \text{ i.o}) = 0, \quad \forall k \in \N$. \\
+TFAE: \\
+(1') $X_n \convas X_0$, \\
+(2') $\sup_{j\ge n} \abs{X_j - X_0} \convprob 0$ as $n\to\infty$, \\
+(3') $\lim_{n\to\infty} P\left(\bigcap_{j=n}^\infty \left[ \abs{X_j - X_0} \le \eps\right]\right) = 1, \quad \forall \eps > 0$.  \\ \medskip
+
+$X_1, X_2, \dots$ \textbf{converge in probability} to $X_0$ on $(\Omega, \mathcal{F}, P)$ if
+$\lim_{n\to\infty} P\left(\abs{X_n - X_0} > \eps\right) = 0, \quad \forall \eps > 0.$ \\ 
+TFAE: \\
+(1) $X_n \convprob X_0$, \\
+(2) $\sup_{m\ge n}\left( \abs{X_m - X_n} > \eps\right) \to 0$ as $n\to\infty, \quad \forall \eps > 0$, \\
+(3) $\forall \set{n_j}$ of $\set{X_n}$,  $\exists \{n_{j_k}\}$ such that $X_{n_{j_k}} \convas X_0$. \\ \medskip
+
+Continuous functions preserve convergence. If $g: \R \to \R$ is continuous, then \\
+(1) $X_n \convas X_0 \implies g(X_n) \convas g(X_0)$, \\
+(2) $X_n \convprob X_0 \implies g(X_n) \convprob g(X_0)$. \\ \medskip
+
+$X_1, X_2, \dots \in \mathcal{L}_r(\Omega, \mathcal{F}, P) \equiv \set{\text{mble } X \in \R: \int_\Omega \abs{X}^r dP < \infty}$ \textbf{converges in $\mathcal{L}_r$} to $X_0$ if 
+$\lim_{n\to\infty} \int_\Omega \abs{X_n - X_0}^r dP = 0.$ \\ \medskip
+
+If $X \in \mathcal{L}_r$, then $t^r P(\abs{X} > t) \to 0$ as $t \to \infty$, that is, $\uparrow r \implies$ faster convergence. If $\exists p \in (0,\infty)$ such that $t^p P(\abs{X} > t) \to 0$, then $X \in \mathcal{L}_r ~\forall r \in (0, p)$. Also, $X_n \convL{r}  X_0 \implies X_n \convL{p} X_0 ~ \forall p \in (0,r)$.  \\\medskip
+
+If $\set{X_n}_{n\ge1} \subset \mathcal{L}_r$, then $\exists X_0 \in \mathcal{L}_r$ such that $X_n \convL{r} X_0 \iff \sup_{m\ge n} \E\abs{X_m-X_n}^r \to 0 \text{ as } n \to \infty.$ \\ \medskip
+
+Fixed $m(X) \in \R$ is a \textbf{median} if $P(X \ge m(X)) \ge 1/2$ and $P(X \le m(X)) \ge 1/2$. Can be defined as $\inf\set{x \in \R: P(X \le x) \ge 1/2}$. If $P(\abs{X} \ge c) < \eps \le 1/2$ then $\abs{m(X)} \le c$. \\\medskip
+
+\textbf{Levy's Inequality}: If $\set{X_n}_{n\ge1}$ are independent, then $\forall \eps > 0$, \\
+(1) $P\left( \max_{1\le j \le n}\left( S_j - m(S_j-S_n)\right) \ge \eps\right) \le 2P(S_n \ge \eps)$, \\
+(2) $P\left( \max_{1\le j \le n}\abs{ S_j - m(S_j-S_n)} \ge \eps\right) \le 2P(\abs{S_n} \ge \eps)$. \\ \medskip
+
+\textbf{Levy's Theorem}: If $\set{X_n}_{n\ge1}$ are indep, then $S_n \convas S \iff S_n \convprob S$. \\\medskip
+
+\textbf{Khintchine-Kolmogorov Convergence Theorem}: If $\set{X_n}_{n\ge1}$ are indep with $\E(X_n) = 0, \E(X_n^2) < \infty$ for all $n \ge 1$ and $\sum_n \E(X_n^2) < \infty$, then $S_n$ converges a.s.$(P)$ and in $\mathcal{L}_2$ to $S = \sum_n X_n$. Also, $\E(S) = 0$, $\E(S^2) = \sum_n E(X_n^2)$. \\\medskip
+
+$\set{X_n}$ and $\set{Y_n}$ are \textbf{tail equivalent} if $\sum_n P(X_n \ne Y_n) < \infty$. If $\set{X_n}$ and $\set{Y_n}$ are tail equivalent, then \\
+(1) By Borel-Cantelli, $P\big(\overline{\lim}(X_n \ne Y_n)\big) = 0 \implies P\big(X_n = Y_n \text{ for large } n\big) = 1$,  \\
+(2) $S_n = \sum_{j=1}^n X_j \convas S \iff S'_n = \sum_{j=1}^n Y_j \convas S'$, \\
+(3) If $b_n \to \infty$, then $\frac{\sum_{j=1}^n X_j}{b_n} \convas 0 \iff \frac{\sum_{j=1}^n Y_j}{b_n} \convas 0.$ \\ \medskip
+
+\textbf{Berry-Esseen Lemma}: If $X_1, \dots, X_n$ are indep with $\E(X_i) = 0$ and $\E\abs{X_i}^3 < \infty, 1 \le i \le n$, then $\forall n \ge 4$,
+$\sup_{x\in\R} \abs{P\left(\frac{S_n}{\sigma_n} \le x \right) - \Phi(x)} \le \frac{2.75}{\sigma^3_n}\sum_{i=1}^n \E\abs{X_i}^3,$
+where $S_n = \sum_{j=1}^n X_j, ~\sigma^2_n = \Var(S_n) = \sum_{i=1}^n \E(X_i^2)$, and $\Phi(\cdot)$ is the $\Norm(0,1)$ cdf. \\ \medskip
+
+\textbf{Kolmogorov's 3-Series Theorem}: If $\set{X_n}_{n\ge1}$ are indep, define for fixed $c > 0$,
+$\sum_n P(\abs{X_n} > c), \quad \sum_n \E(X_n^{(c)}), \quad \sum_n \Var(X_n^{(c)}),$
+where $X_n^{(c)} = X_n \indicate{\abs{X_n} \le c}$. Then, \\
+(1) if the 3 series conv for \emph{some} $c > 0$, then $S_n \convas S$, \\
+(2) if $S_n \convas S$, then the 3 series converge for \emph{all} $c > 0$. \\ \medskip
+
+\textbf{Corollary}: If $\set{X_n}_{n\ge1}$ are indep with $\E(X_n) = 0$, then \\
+(1) if $\sum_n\big[ \E(X_n^{(c)})^2 + \E\abs{X_n}\indicate{\abs{X_n} > c}\big] < \infty$ for \emph{some} $c > 0$, then $S_n \convas S$, \\
+(2) if $\sum_n \E\abs{X_n}^{\alpha_n} < \infty$ for \emph{some} $\set{\alpha_n} \subset [1,2]$, then $S_n \convas S$. \\ \medskip
+
+
+%%%%%% Exam 2 content
+\subsection*{Laws of Large Numbers}
+$\set{X_n}_{n\ge1}$ obeys the LLN if $\exists \set{b_n} \subset \R$ and $0 < a_n \uparrow$ such that
+$$\text{\bf{SLLN}:}~ \frac{S_n - b_n}{a_n} \convas 0, \quad \text{\bf{WLLN}:}~ \frac{S_n - b_n}{a_n} \convprob 0 .$$
+
+\textbf{Kronecker's Lemma}:  If $\set{a_n}, \set{b_n} \subset \R$ such that $0<b_n \uparrow \infty$ and $\sum_{n=1}^\infty a_n/b_n$ converges, then
+$ \frac{1}{b_n} \sum_{j=1}^n a_n \to 0 \text{ as } n \to \infty.$ \\ \medskip
+
+\textbf{Cesaro's Mean Summability Theorem}: If $\set{x_n} \subset \R$ such that $\lim_{n\to\infty}x_n=x<\infty$, then 
+$\lim_{n\to\infty} \frac{1}{n}\sum_{j=1}^nx_j = x.$ \\ \medskip
+
+\textbf{Theorem}: If $\set{X_n}$ indep such that $\sum_{n=1}^\infty \E\abs{X_n}^{\alpha_n}/n^{\alpha_n} < \infty$ for $\alpha_n \in [1,2]$, then
+$\frac{S_n - \E S_n}{n} = \frac{1}{n}\sum_{i=1}^n (X_i - \E X_i) \convas 0.$ \\ \medskip
+
+\textbf{Marcinkiewicz-Zygmund SLLN}: If $\set{X_n}_{n\ge1}$ are iid and $p \in (0,2)$, \\
+(1) if $\exists c \in \R$ s.t. $\frac{S_n -nc}{n^{1/p}}\convas 0$, then $\E\abs{X_1}^p < \infty$. \\
+(2) if $\E\abs{X_1}^p < \infty$, then (2) holds with $c = \E X_1$ if $p \in [1,2)$ and (2) holds $\forall c\in \R$ if $p \in (0,1)$. \\ \medskip
+
+\textbf{Kolmogorov's SLLN}: If $\set{X_n}$ are iid, then 
+$\bar{X}_n = \frac{S_n}{n} \convas \E X_1 \iff \E\abs{X_1} < \infty \iff \frac{S_n - n\E X_1}{n} \convas 0.$ \\ \medskip
+
+\textbf{Useful Theorem}: For any r.v.\@  $X$ and $r > 0$, $\sum_{n=1}^\infty P(\abs{X} > n^{1/r}) \le \E\abs{X}^r \le \sum_{n=0}^\infty P(\abs{X} > n^{1/r}).$ \\ \medskip
+
+\textbf{Etemaldi's SLLN}: If $\set{X_n}_{n\ge1}$ are \emph{pairwise} indep and identically distributed, then 
+$\bar{X}_n = \frac{S_n}{n} \convas \E X_1 \iff \E\abs{X_1} < \infty.$ \\ \medskip
+
+\textbf{General WLLN}: If $\set{X_n}_{n\ge1}$ are indep,
+$ \sum_{j=1}^n P\left(\abs{X_j} > n\right) \to 0$, and $\frac{1}{n^2} \sum_{j=1}^n E X_j^{(n)2} \to 0,$
+then $\frac{S_n-a_n}{n}\convprob 0,$
+where $a_n = \sum_{j=1}^n \E X_j^{(n)}$ and $X_j^{(n)} \equiv X_j I(\abs{X_j} \le n).$ \\ \medskip
+
+\textbf{Feller's WLLN}: If $\set{X_n}$ iid with $\lim_{n\to\infty} xP(\abs{X_1}>x) = 0$, then $\frac{S_n}{n} - \E X_1^{(n)} \convprob 0.$ \\ \medskip
+
+
+\subsection*{Empirical Distributions}
+The \textbf{empirical cdf} of $X_1, \dots, X_n$ is the random cdf:
+$F_n(x) = \frac{1}{n} \sum_{i=1}^n I(X_i \le x), \quad x \in \R.$ \\
+(1) With $X_i$'s on $(\Omega, \mathcal{F}, P)$, for each $\omega \in \Omega$,
+$F_n(x, \omega) = \frac{1}{n} \sum_{i=1}^n I(X_i(\omega) \le x).$ \\
+(2) $F_n(x)$ is a right-continuous, nondecreasing func of $x \in \R$, \\
+(3) For any $x \in \R$, $F_n(x)$ is a r.v., i.e., is $\langle \mathcal{F}, \Borel(\R)\rangle$-mble:
+$F_n(x) = \frac{1}{n}\sum_{i=1}^n I(X_i^{-1}(-\infty,x])(\omega).$ \\ \medskip
+
+\textbf{Glivenko-Cantelli Theorem}: If $\set{X_n}_{n\ge1} \iid F$, then
+$\sup_{x\in\R} \abs{F_n(x) - F(x)}\convas 0$. \\ \medskip
+
+\textbf{Quantile func}: $\phi(u) = \inf\set{x \in \R: F(x) \ge u} \equiv F^{-1}(u), ~u \in (0,1)$ which implies
+$F(x) \ge u \iff x \ge \phi(u)$ and  $F(\phi(u)-) \le u \le F(\phi(u)).$ \\ \medskip
+
+\subsection*{Convergence in Distribution}
+The \textbf{cdf} of $\mu_n$ is
+$F_n(\mathbf{x}) = \mu_n\big( (-\infty, x_1] \times \cdots \times (-\infty, x_n]\big), \quad\mathbf{x} \in \R^k.$ \\
+If $X_n$ has prob dist $\mu_n$ [i.e., $P(X_n \in A) = \mu_n(A), ~A \in \Borel(\R^k)$], then $F_n$ is the \textbf{cdf} of $X_n$.  \\\medskip
+
+$\set{\mu_n}_{n\ge1}$ ($\set{F_n}_{n\ge1}$) \textbf{converges weakly} to $\mu_0$ ($F_0$), denoted $\mu_n \Rightarrow \mu_0$ ($F_n \Rightarrow F_0$), if
+$\lim_{n\to\infty}F_n(\mathbf{x}) = F_0(\mathbf{x}) ~ \forall \mathbf{x} \in C(F_0),$ where $C(F_0) = \set{\mathbf{x} \in \R^k: F_0 \text{ is continuous at } \mathbf{x}}$.  \\\medskip
+
+$\set{X_n}_{n\ge1} \subset R^k$ \textbf{converges in distribution} to a r.v.\@ $X_0$ if $\mu_n \Rightarrow \mu_0$, denoted by $X_n \convdist X_0$. 
+That is, if $X_n = (X_{n,1}, \dots, X_{n,k})$ has cdf $F_n, n \ge 0$, then
+\begin{align*}
+\lim_{n\to\infty}F_n(\mathbf{x}) 
+= \lim_{n\to\infty} P(X_{n,1} \le x_1, \dots, X_{n,k} \le x_k) \\
+= P(X_{0,1} \le x_1, \dots, X_{0,k} \le x_k) 
+= F_0(\mathbf{x}) \quad \forall \mathbf{x} \in C(F_0).
+\end{align*}
+NB:
+(1) $\mathbf{x} = (x_1, \dots, x_k) \in C(F_0) \iff F_0(\mathbf{x}) = P(X_{0,1} < x_1, \dots, X_{0,k} < x_k) = F_0(\mathbf{x}-)$
+i.e., if also left continuous; (2)  $C(F_0)^c$ is at most countable; (3)  $X_n \convprob X_0 \implies X_n \convdist X_0$ but not the other direction, unless $X_0$ is degenerate. \\ \medskip
+
+\textbf{Skorohod's Embedding Theorem}: If $\set{\mu_n}_{ n\ge0}$ on $(\R^k, \Borel(\R^k))$ such that $\mu_n \Rightarrow \mu_0$, then $\exists$ random vectors $\set{Y_n}_{n\ge0}$ on a \emph{common} psp such that $Y_n$ has distribution $\mu_n$ for all $n \ge 0$ and $Y_n \convas Y_0$. That is, $P(Y_n \in A) = \mu_n(A), ~A \in \Borel(\R^k), n \ge 0$. \\ \medskip
+
+\textbf{Continuous Mapping Theorem}: \\
+\textbf{(a)}: Let $\set{\mu_n}_{n \ge0}$ are p.m.'s on $(\R^k, \Borel(\R^k))$  and $h: \R^k \to \R^m$ is a $\langle \Borel(\R^k), \Borel(\R^m) \rangle$-mble func such that $\mu_0(D_h)  = 0$, where $D_n \in \Borel(\R^k)$ denotes the set of all points of discontinuities of $h$. If $\mu_n \Rightarrow \mu_0$, then the induced measures converge weakly: $\mu_n h^{-1} \Rightarrow \mu_0 h^{-1}.$ \\
+\textbf{(b)}: Let ${X_n}_{n \ge 0} \subset R^k$ and mble $h: \R^k \to \R^m$ be such that $P(X_0 \in D_h) = 0$, where $D_h$ is as above. If $X_n \convdist X_0$, then
+$h(X_n) \convdist h(X_0).$ \\ \medskip
+
+\textbf{Slutsky's Theorem}: If $\set{X_n}_{n\ge1}, \set{Y_n}_{n \ge 1}$ are such that $X_n \convdist X$ and $Y_n \convprob a$ for some $a \in \R$, then
+(1) $X_n + Y_n \convdist X + a, $ (2) $ X_nY_n \convdist aX, $ (3) $ X_n/Y_n \convdist X/a \text{ if } a \ne 0.$ \\ \medskip
+
+\subsection*{Characterizations of Convergence in Distribution}
+For a p.m.\@ $\mu$ on $(\R^k, \Borel(\R^k))$, a set $A \in \Borel(\R^k)$ is called a \textbf{$\mu$-continuity} set if $\mu(\partial A) = 0$, where $\partial A = \overline{A} \setminus \text{int}A$. E.g., $\partial (-\infty, x] = (-\infty, x] \setminus (-\infty, x) = \set{x}.$ \\ \medskip
+
+\textbf{Helly-Bray Theorem}: If $\set{\mu_n}_{ n\ge0}$ are p.m.'s on $(\R, \Borel(\R))$, then  \\
+(1) $\mu_n \Rightarrow \mu_0 \iff \mu_n(A) \to \mu_0(A) ~\forall A \in \Borel(\R)$ with $\mu_0(\partial A) = 0.$ \\
+(2) $\mu_n \Rightarrow \mu_0 \iff \int fd\mu_n \to \int f d\mu_0$ for all bounded cont. func. $f: \R \to \R$. \\ \medskip
+
+\textbf{Lemma}: If $\mu_n \Rightarrow \mu_0$ on $(\R, \Borel(\R))$ and $f: \R \to \R$ is a bounded, Borel-mble func with $\mu_0(D_f)$ (where $D_f \in \Borel(\R)$ is the set of discontinuity points of $f$), then $\int fd\mu_n \to \int f d\mu_0 \text{ as } n \to \infty.$ \\ \medskip
+
+$\set{\mu_n}_{n\ge1}$ on $(\R^k, \Borel(\R^k))$ is \textbf{tight} if $\forall \eps >0, \exists M_\eps > 0 $ such that
+$\sup_{n\ge1} \mu_n\left(\set{x\in\R^k: \norm{x} > M_\eps}\right) < \eps.$ \\ \medskip
+
+$\set{X_n}_{n\ge1} \subset \R^k$ is \textbf{tight} if $\set{\mu_n}_{n\ge1}$ is tight. That is, $\forall \eps > 0, \exists M_\eps > 0$ such that
+$\sup_{n\ge1}P(\norm{X_n} > M_\eps) = \sup_{n\ge1}\mu_n\left(\set{x \in \R^k: \norm{x} > M_\eps }\right) < \eps$. \\ \medskip
+
+$\set{X_n}$ is \textbf{uniformly integrable} if $\forall \eps > 0, \exists t_\eps > 0$ such that
+$\sup_{n\ge1}\E \norm{X_n} I(\norm{X_n} > t_\eps) = \sup_{n\ge1}\int_{\norm{x} > t_\eps} \norm{x} d\mu_n < \eps.$ \\ \medskip
+
+\textbf{Proposition}: \\
+(1) If $X_n \convdist X_0$, then $\set{X_n}$ is tight. \\
+(2) If $\set{X_n}$ is tight and $Y_n \convprob 0$ for $X_n, Y_n$ on $(\Omega_n, \mathcal{F}_n, P_n)$, then $X_nY_n \convprob 0$. \\ \medskip
+
+\textbf{Theorem}: $\set{X_n}_{n\ge1}$ ($\set{\mu_n}_{n\ge1})$ is tight iff for any subseq $X_{n_k}$ of $X_n$ there $\exists$ a further subseq $X_{n_{k_j}}$ of $X_{n_k}$ and a r.v.\@ (p.m.\@) such that $X_{n_{k_j}} \convdist X_0$ ($\mu_{n_{k_j}} \Rightarrow \mu_0$).  \\ \medskip
+
+\textbf{Corollary}: If $\set{X_n}$ is tight and its convergent subseq converge in law to the \emph{same} r.v.\@, then $X_n \convdist X_0$.  \\ \medskip
+
+\textbf{Theorem}: If $\set{X_n}, n\ge1$ is UI and $X_n \convdist X_0$, then $\E\abs{X_0} < \infty$ and $\E X_n \to \E X_0$. \\ \medskip
+
+\textbf{Corollary}:
+If $X_n \convdist X_0$ and $\sup_{n\ge1} \E\abs{X_n}^{r+\delta} < \infty$ for some $r \in \N$ and $\delta > 0$, then $\E\abs{X_0}^r < \infty$ and $\E X_n^r \to \E X_0^r$ (recall that $\sup_{n\ge1} \E\abs{Z_n}^{1+\delta} \implies \set{Z_n}$ is UI). \\ \medskip 
+
+\textbf{Fr\'{e}chet-Shohat Theorem}: If $\lim_{n\to\infty} \E X_n^r = \beta_r \in \R$ for all integers $r \ge 1$ and if $\set{\beta_r: r \ge 1}$ are the moments of a \emph{unique} r.v.\@ $X_0$, then $X_n \convdist X_0$. \\ \medskip
+
+\textbf{Moments uniquely determine distribution} when Cardeman's condition is met, $\sum_{r=1}^\infty \beta_{2r}^{-1/(2r)} = \infty,$ or if the MGF $M_X(t) = \E e^{tX} < \infty ~ \forall \abs{t} < \eps$ for some $\eps > 0$. Recall: $\E X^r = \frac{d^r}{dt^r} M_X(t) \bigg|_{t=0}.$ \\ \medskip
+
+\subsection*{Characteristic Functions}
+If $a + bi$ and $c + di$ are complex, then their sum is $(a + b) + (c+d)i$, their product is $(ac - bd) + (ad + bc)i$, and the modulus is $\abs{a + bi} = \sqrt{a^2 + b^2} = \sqrt{(a+bi)(a-bi)}$ For any $b \in \R$, $e^{bi} = \cos(b) + i \sin(b)$ and $\abs{e^{bi}} = \sqrt{\cos^2(b) + \sin^2(b)} =1$. For fixed $b \in \R$, $g(t) = e^{tbi}: \R \to \C$ is infinitely differentiable in $t$ with $n$th derivative $(bi)^n e^{tbi}$. \\ \medskip
+
+The \textbf{cf} of $X \in \R^k$ is
+$\phi_X(t) = \E e^{it'X} = \E \cos(t'X) + i \E \sin(t'X), \quad t\in \R^k.$ \\ \medskip
+
+Note that $\phi_X(0) = 1$ and $\phi_X(t)$ is uniformly continuous on $\R^k$: by the BCT,
+$\sup_{t\in\R^k} \abs{\phi_X(t+h) - \phi_X(t)} \to 0 \text{ as } \abs{h} \to 0.$ \\ \medskip
+
+\textbf{Theorem}: If $X \in \mathcal{L}_r$, then $\phi_X(t)$ is $r$-times diffble on $\R$ and
+$\phi^{(r)}_X(t) = \E (iX)^r e^{itX}, \quad t \in \R.$ \\ \medskip
+
+\textbf{Riemann-Lebesgue Lemma}: If $X$ has a density $f$ w.r.t.\@ $m$ on $\R$, then $\phi_X(t) \to 0$ as $\abs{t} \to \infty$. \\ \medskip
+
+\textbf{Levy Continuity Theorem}: \\
+(1) If $X_n \convdist X_0$, then $\forall T > 0$, $\sup_{\abs{t} < T} \abs{\phi_{X_n}(t) - \phi_{X_0}(t)} \to 0 \text{ as } n \to \infty.$ \\ 
+(2) If $\phi_{X_n}(t) \to g(t)$ as $n \to \infty ~ \forall t \in \R$ and $g(\cdot)$ is continuous at zero, then $g(\cdot)$ is a cf and $X_n \convdist X_0$, where $X_0$ has cf $g(\cdot)$. \\ \medskip
+
+\textbf{Corollary}: $X_n \convdist X_0 \iff \phi_{X_n}(t) \to \phi_{X_0}(t)$ as $n \to \infty \quad \forall t \in \R$. \\ \medskip
+
+\textbf{Levy Inversion Formula in $\R^k$}: Let $X \in \R^k$ with cf $\phi_X(t)$ for $t = (t_1, \dots, t_k) \in \R^k$. Then, $\forall$ rectangle $A = (a_1, b_1] \times \cdots \times (a_k, b_k]$ with $P(X \in \partial A) = 0$,\\
+$P(X \in A) = \lim_{T\to\infty} \frac{1}{(2\pi)^k} \int_{-T}^T \cdots \int_{-T}^T \prod_{j=1}^k
+\frac{e^{-it_ja_j} - e^{-it_jb_j}}{it_j} \phi_X(t_1, \dots, t_k)dt_1\dots dt_k.$ \\ \medskip
+
+Also, if $\int_{\R^k} \abs{\phi_X(t_1,\dots,t_k)}dt_1\dots dt_k < \infty$, then $X$ has a bounded, continuous density $f_X(x)$ w.r.t.\@ $m$ on $\R^k$ given by\\
+$f_X(x) = \frac{1}{(2\pi)^k} \int_{\R^k} e^{-i\sum_{j=1}^k x_jt_j}\phi_X(t_1, \dots, t_k)dt_1 \cdots dt_k, \quad x \in \R^k.$ \\ \medskip
+
+\textbf{Theorem}: $X_1, \dots, X_k$ are indep  $ \iff \forall t_1, \dots, t_k \in \R$,
+$\phi_{X_1, \dots, X_k}(t_1, \dots, t_k) \equiv \E e^{i\sum_{j=1}^k X_j t_j} =
+\prod_{j=1}^k \E e^{iX_j t_j} = \prod_{j=1}^k \phi_{X_j}(t_j).$ \\ \medskip
+
+
+\textbf{Theorem}: If $\set{X_n}, n \ge 0 \subset\R^k$, \\
+(1) $X_n \convdist X_0 \iff \phi_{X_n}(t) \to \phi_{X_0}(t) ~ \forall t \in \R^k$, \\
+(2)  (Cramer-Wold device) $X_n \convdist X_0 \iff t'X_n \convdist t' X_0 ~ \forall t \in \R^k$.
+
+
+%%%%%% Final exam content
+\subsection*{Central Limit Theorems}
+Let $\set{X_{n,j}: 1 \le j \le r_n}_{n\ge1}$ be an independent triangular array with 
+\begin{equation}\label{eq:b}
+\E X_{n,j} = 0, \quad 0 < \E X^2_{n,j} = \sigma^2_{n,j} < \infty, \quad \nu_n^2 = \sum_{j=1}^{r_n} \sigma^2_{n,j},
+\end{equation}
+\textbf{Lindeberg Condition}: $\forall \eps > 0$, $\lim_{n\to\infty} \nu_n^{-2} \sum_{j=1}^{r_n} \E X^2_{n,j} \indicate{\abs{X_{n,j}} > \eps\nu_n} = 0.$ \\ \medskip
+
+\textbf{Lindeberg CLT}: if $\set{X_{n,j}: 1 \le j \le r_n}_{n\ge1}$ is a triangular array satisfying (\ref{eq:b}) and the Lindeberg condition, then $\frac{S_n}{\nu_n} = \frac{\sum_{j=1}^{r_n} X_{n,j}}{\nu_n} \convdist \Norm(0,1)$. \\ \medskip
+
+\textbf{Corollary}: if $\set{X_{n,j}}$ is a null array, i.e., $\max_{1\le j \le r_n} P\left( \abs{X_{n,j}} > \eps \nu_n\right) \to 0$, then the CLT holds $\iff$ Lindeberg condition. \\ \medskip
+
+
+\textbf{Lyapounov's Condition}: $\exists \delta > 0$ such that $\lim_{n\to\infty} \nu_n^{-(d+\delta)} \sum_{j=1}^{r_n} \E \abs{X_{n,j}}^{2+\delta} = 0.$ \\ \medskip
+
+\textbf{Lyapounov's CLT}: if $\set{X_{n,j}: 1 \le j \le r_n}_{n\ge1}$ is a triangular array satisfying (\ref{eq:b}) and the Lyapounov's condition, then $\frac{S_n}{\nu_n} = \frac{\sum_{j=1}^{r_n} X_{n,j}}{\nu_n} \convdist \Norm(0,1)$. \\ \medskip
+
+\textbf{Multivariate CLT}: if $\set{X_n}_{n\ge1} \subset \R^d$ is iid with $\E \norm{X_1}^2 < \infty$ and nonsingular $\Var(X_1) = \Sigma$ ($\abs{\Sigma} \ne 0$), then
+$\sqrt{n}(\bar{X}_n - \E X_1) \convdist \Norm(0, \Sigma)$ by the Cramer-Wold device and Slutsky's theorem. \\ 
+
+\subsection*{Infinitely Divisible \& Stable Distributions}
+$X$ is \textbf{infinitely divisible} if $\forall n \ge 1, \exists$ cf $\phi_n$ such that $\phi_X(t) = [\phi_n(t)]^n, ~ \forall t\in \R$. \\
+Note $X \eqdist X_{n,1} + \cdots + X_{n,n}$ for iid $X_{n,j}$ with cf $\phi_n$. \\ \medskip
+
+$X$ is infinitely divisible $\iff \phi_X(t) = \exp\left[ itb + \int_\R \left( \frac{e^{itx} - 1 - it\tau(x)}{x^2}\right)dM(x)  \right] ~ \forall t \in \R$,
+where $b \in \R$, $M$ is a ``cannonical'' measure on $(\R, \Borel(\R))$ satisfying $M(I) < \infty ~ \forall \text{ finite intervals } I \in \R$ and $\forall x > 0, \int_{-\infty}^{-x} \abs{y}^{-2} dM(y) + \int_x^\infty y^2 dM(y) < \infty$, and $\tau(x) =  \left\{ \begin{array}{rl}
+ 1 &\mbox{ if $x > 1$} \\
+ x &\mbox{ if $\abs{x} \le 1$} \\
+ -1 &\mbox{ if $x <- 1$} \\
+       \end{array} \right.$ \\ \medskip
+       
+ \textbf{Theorem}: If $\set{X_{n,j}: 1 \le j \le r_n}_{n\ge1}$ is a null triangular array, then $\exists b_n \in \R$ such that $S_n - b_n \convdist X$ where $X$ is infinitely divisible $\iff$ (a), (b), (c) hold: \\
+ (a) $\lim_{n\to\infty} \left[\sum_{j=1}^{r_n} \E \tau(X_{n,j})\right] - b_n = b$, \\
+ (b) $\lim_{n\to\infty} \sum_{j=1}^{r_n}\Var\left[ \tau(X_{n,j})\right] = M\big((-1,1)\big) + \int_{\abs{y} \ge 1} y^{-2}dM(y)$, \\
+ (c) $\forall x > 0$ with $M(\set{\pm x}) = 0$, $\lim_{n\to\infty} \sum_{j=1}^{r_n} P(X_{n,j} > x) = \int_x^\infty y^{-2} dM(y)$, and  $\lim_{n\to\infty} \sum_{j=1}^{r_n} P(X_{n,j} < -x) = \int_{-\infty}^{-x} y^{-2} dM(y)$. \\ \medskip
+
+
+\textbf{Weaker result}: $X$ is infinitely divisible $\iff \exists \set{X_n}_{n\ge1}$ iid with $\sum_{j=1}^n X_j \convdist X$. \\ \medskip
+
+Nondegenerate $X$ is \textbf{stable} if $\forall n \ge1, \exists a_n > 0, b_n \in \R$ such that $\phi_X(t) = \left[ \phi_X\left( \frac{t}{a_n}\right)\right]^n \exp\left[ - \frac{itb_n}{a_n} \right], ~\forall t\in \R$. \\
+Note $X \eqdist [X_{n,1} + \cdots + X_{n,n} - b_n]/a_n$ for iid $X_{n,j} \sim X$, i.e., $S_n \eqdist a_nX + b_n$, where $a_n = n^{1/\alpha}$ with $\alpha \in (0,2]$, e.g., $\alpha = 1$ for Cauchy, $\alpha = 2$ for normal.  $\alpha < 2 \implies$  infinite variance. \\ \medskip
+
+All stable distributions are infinitely divisible and have canonical measure $M(A) = \sigma^2\indicate{0 \in A}$ for normal distribution. For non-normals, for $0 < \alpha < 2$ and $x > 0$, $M_\alpha\big((0,x]\big) = cpx^{2-\alpha}$ and $M_\alpha\big([-x, 0)\big) = cqx^{2-\alpha}$ where $c > 0, p,q \ge 0$ with $p + q = 1$. \\ \medskip
+
+\textbf{Theorem}: $X$ is stable $\iff \exists \set{X_n}, \set{a_n}, \set{b_n}$ such that $\frac{S_n - b_n}{a_n} \convdist X$. \\ 
+
+
+\subsection*{Conditional Expectation}
+The \textbf{conditional expectation} of $Y$ given $\mathcal{G} \subset \mathcal{F}$ under $P$, denoted $\E(Y \given \mathcal{G})$, is $g: \Omega \to \R$ satisfying \\
+(1) $g$ is $\langle \mathcal{G}, \Borel{B}(\R) \rangle$-mble, i.e., is a r.v.: $\E(Y \given\mathcal{G})^{-1}(B) \in \mathcal{G} ~\forall B \in \Borel(\R)$, \\
+(2) $\forall G \in \mathcal{G}, \int_G gdP = \int_G Y dP$. \\ \medskip
+
+The \textbf{conditional probability} of $A \in \mathcal{F}$ given $\mathcal{G} \subset \mathcal{F}$, denoted $P(A\given\mathcal{G})$, is $P(A\given\mathcal{G}) = \E(\indicate{A} \given \mathcal{G})$. \\ \medskip
+
+\textbf{Examples}: \\
+- If $\mathcal{G} = \set{\emptyset, \Omega}$, then  $\omega \mapsto \E(Y)$ is $\mathcal{G}$-mble (since $\E(Y)^{-1}(B) = \emptyset \text{ if } E(Y) \in B$ and $\Omega$ o.w.) and trivially $\int_A \E(Y)dP = \int_A YdP ~\forall A \in \mathcal{G}$. Thus $\E(Y\given\mathcal{G}) =\E(Y).$ \\
+- If $\mathcal{G} = \mathcal{F}$, then clearly $\E(Y\given\mathcal{G}) = Y$. \\
+- If $\mathcal{F} = \set{\emptyset, \Omega, B, B^c}$ where $0 < P(B) < 1$, then 
+$\E(Y \given \mathcal{G})(\omega) = \left( \frac{1}{P(B)} \int_B Y dP \right) \indicate{B}(\omega) + \left( \frac{1}{P(B^c)} \int_{B^c} Y dP \right) \indicate{B^c}(\omega).$ \\ \medskip
+
+\textbf{Projection Theorem}: \\
+- \emph{Hilbert space}: $H = \mathcal{L}_2(\Omega, \mathcal{F}, P)$, \\
+- \emph{Inner product}: $\inner{X, Z} = \E(XZ) ~ \forall X,Z\in H$, \\
+- \emph{Orthogonality}: $X,Z\in H$ are orthogonal if $\inner{X,Z} = 0$, \\
+- \emph{Distance:} squared distance between $X,Z\in H$ is the mse: $\norm{X - Z}^2 = \inner{X - Z, X - Z} = \E(X - Z)^2$, \\
+- \emph{Statement of the Theorem}: let $H_0 \subset H$ be the subspace of all funcs of $X$ with finite second moment. Then, \\
+(1) $\exists \hat{Y} \in H_0$ such that $\norm{Y - \hat{Y}} = \min \set{ \norm{Y - h(X)}^2: h(X) \in H_0}$, where $\hat{Y}$ is the conditional expectation of $Y$ given $X$, \\
+(2) Let $V \in H$. Then $V = \hat{Y} \iff$ (a) $V \in H_0$ (i.e., $V$ is $\langle \mathcal{G} = \sigma\langle X\rangle, \Borel(\R)\rangle$-mble \& $\E V^2 < \infty$), and (b) residual $Y - V$ is orthogonal to any other $h(X) \in H_0$ (i.e., $\E[(Y - V)h(X)] = \inner{Y - V, h(X) } = 0$). \\ \medskip
+
+\textbf{Existence \& a.s.\@ Uniqueness}: $\E(Y\given\mathcal{G})$ satisfying (1)-(2) of the definition exists and if $g$ and $h$ are two versions of it, then $g = h \text{ as}(P)$. \emph{Proof}: 
+Define $\mu(A) = \int_A Y dP ~ \forall A \in \mathcal{G}$. Then $\mu$ is finite and $\mu \ll P$ on the restricted psp $(\Omega, \mathcal{G}, P)$ since $A \in \mathcal{G}$ with $P(A) = 0 \implies \mu(A) = 0$. By the Radon-Nikodym theorem, $\exists$ density $g = \frac{d\mu}{dP} \ge 0$ and for all $G \in \mathcal{G}$, $\int_G gdP = \mu(G) = \int_G Y dP$. \\ \medskip
+
+\textbf{Example}: (cble partition) Let $\mathcal{G} \subset \mathcal{F}$ is generated by countable partition $\set{B_i}_{i\ge1}$ of disjoints sets in $\mathcal{F}$. \\
+(1) for any $X \in \mathcal{L}_1(P)$, $\E(X \given \mathcal{G}) = \sum_{i=1}^\infty \E_{B_i}(X) \indicate{B_i}$ where $\E_{B_i}(X) = \int_{B_i} X dP / P(B_i) \indicate{P(B_i) > 0}$. \\
+(2) for any $A \in \mathcal{F}$, $P(A \given \mathcal{G}) = \sum_{i=1}^\infty P(A \given B_i)\indicate{B_i}$ where $P(A \given B_i) = P(A \cup B_i)/ P(B_i) \indicate{P(B_i) > 0}$. \\ 
+\emph{Proof}: let $h(\omega) = \sum_{i=1}^\infty \E_{B_i}(X) \indicate{B_i}(\omega),~ \omega \in \Omega$ and note $\mathcal{G} = \set{\cup_I B_i: I \subset \N}$. \\ \medskip
+
+\textbf{Example}: (discrete case) Let $X$ be a discrete r.v.\@ with support $x_1, x_2, \dots$, then for $A \in \Borel(\R)$, $P(A \given X) = P(A \given \sigma\langle X \rangle ) = \sum_{i=1}^\infty P(A \given X = x_i )\indicate{X = x_i}$. \\ \medskip
+
+\textbf{Example}: (absolutely continuous case) $P(Y\in C \given X) = \phi(X) = \frac{\int_C f(X, t) dt}{f_X(x)} \indicate{f_X(x) > 0}$ by showing $\int_B \phi(X) dP = \int_{X^{-1}(A)} \phi(X) dP = \int_A \phi(x) PX^{-1}(dx) =
+P([Y\in C] \cap B)$. \\ \medskip
+
+\textbf{Properties}: \\
+(1) $\E(\E(Y \given \mathcal{G})) = \E(Y)$ directly from the definition since $\Omega \in \mathcal{G}$, \\
+(2) if $Y$ is $\mathcal{G}$-mble, then $\E(Y \given \mathcal{G}) = Y$ as($P$) by taking $g = Y$, \\
+(3) if $\mathcal{G}_1 \subset \mathcal{G}_2 \subset \mathcal{F}$, then 
+$\E(Y \given \mathcal{G}_1) = \E [\E(Y \given \mathcal{G}_1) \given \mathcal{G}_2] =  \E [\E(Y \given \mathcal{G}_2) \given \mathcal{G}_1]$ as($P$), \\
+(4) if $Y \ge 0$ w.p.1, then $\E(Y \given \mathcal{G}) \ge 0$ w.p.1, \\ 
+(5) for $a,b\in\R$, $\E(aY_1 + bY_2\given\mathcal{G}) = a\E(Y_1\given\mathcal{G}) + b\E(Y_2\given\mathcal{G})$ as($P$), \\
+(6) if $Y_1 \ge Y_2$ w.p.1, then $\E(Y_1\given\mathcal{G}) \ge \E(Y_2 \given \mathcal{G})$ w.p.1, \\
+(7) if $U$ is $\mathcal{G}$-mble and $\E\abs{YU} < \infty$, then $\E(UY\given\mathcal{G}) = U\E(Y\given\mathcal{G})$ as($P$), \\
+(8) if $\phi: (a,b) \to \R$ is convex for $a,b\in\overline{\R}$, $P(Y \in (a,b)) = 1$, and $\E\abs{\phi(Y)} < \infty$, then $\E(\phi(Y)\given\mathcal{G}) \ge \phi(\E(Y\given\mathcal{G}))$ as($P$). \\ \medskip
+
+\textbf{MCT for CE}: If $0 \le Y_n \le Y_{n+1}$ w.p.1 $\forall n \ge 1$ and $Y_n \convas Y$, then $\lim_{n\to\infty} \E(Y_n \given \mathcal{G}) = \E(Y \given \mathcal{G})$ w.p.1. \\ \medskip
+
+\textbf{Fatou's Lemma for CE}: If $0 \le Y_n ~ \forall n \ge 1$, then $\E(\underline{\lim} Y_n \given \mathcal{G}) \le \underline{\lim}\E(Y_n \given \mathcal{G})$ w.p.1. \\ \medskip
+
+\textbf{DCT for CE}: If $Y_n \convas Y$ and $\abs{Y_n} \le Z$ w.p.1 $\forall n \ge 1$ where $\E\abs{Z} < \infty$, then $\lim_{n\to\infty} \E(Y_n \given \mathcal{G}) = \E(Y \given \mathcal{G})$ w.p.1. \\ \medskip
+
+\textbf{Proposition}: If $\mathcal{C}$ is a $\pi$-system such that $\mathcal{G} = \sigma\langle \mathcal{C} \rangle$, $\Omega$ is a countable union of disjoint $\mathcal{C}$-sets, and $\E\abs{Y} < \infty$, then a $P$-integrable func $g$ is a version of $\E(Y \given \mathcal{G})$ if $g$ is $\mathcal{G}$-measurable and $\E g\indicate{G} = \int_G gdP = \int_G Y dP = \E Y \indicate{G} ~\forall G \in \mathcal{C}$. \\ 
+
+
+\subsection*{Conditional Distributions}
+The \textbf{conditional distribution} of $Y$ given $\mathcal{G} \subset \mathcal{F}$ (or the regular conditional probability of $\mu_Y$ on $\R^d$ given $\mathcal{G}$) is a function $\mu: \Omega \times \Borel(\R^d) \to [0,1]$ satisfying \\
+(1) $\forall \omega \in \Omega$, $\mu(\omega, \cdot)$ is a p.m.\@ on $(\R^d, \Borel(\R^d))$, \\
+(2) $\forall A \in \Borel(\R^d)$, $\mu(\cdot, A)$ is $\mathcal{G}$-mble, \\
+(3) $\forall A \in \Borel(\R^d)$, $\int_G \mu(\omega, A) dP(\omega) = P(G \cap \set{Y \in A}) ~ \forall G \in \mathcal{G}$. \\
+Note: (2)-(3) $\iff \mu(\cdot, A)$ is a version of $P(Y \in A \given \mathcal{G})$ as $\mu(\omega, A) = P(Y \in A \given \mathcal{G})(\omega) = \E(\indicate{A}(Y) \given \mathcal{G})(\omega)$. \\ \medskip
+
+Sometimes $\mu(\cdot, \cdot)$ is denoted $\mathcal{L}(Y \given \mathcal{G})$. For $X,Y$ we write $\mathcal{L}(Y \given X)$ for $\mathcal{L}(Y \given \sigma\langle X\rangle)$. Define 
+$\mu\big( (x,y), C\big) = \indicate{f_X(x) > 0} \int_C f_{Y\given X = x}(t)dt =\indicate{f_X(x) > 0} \int_C \frac{f(x,t)}{f_X(x)}dt, ~ C \in \Borel(\R)$. \\ \medskip
+
+If $\sigma\langle Y\rangle$ and $\mathcal{G}$ are independent, then $\E(Y \given \mathcal{G} = \E(Y)$ since (1) $\E(Y)$ is a constant $\implies \E(Y)$ is $\mathcal{G}$-mble and (2) by independence $\int_G Y dP = \int_\Omega Y \indicate{G} dP = \int_\Omega Y dP \int_\Omega \indicate{G} dP = \E(Y)P(G) = \int_G \E(Y) dP ~ \forall G \in \mathcal{G}$. \\ \medskip
+
+
+\textbf{Theorem}: For $Y \in \R^d$, \\
+(a) $\exists \mu: \Omega \times \Borel(\R^d) \to [0,1]$ satisfying (1)-(3) in the def of the conditional distribution of $Y$ given $\mathcal{G}$, \\
+(a) if $\phi: \R^d \to \R$ is Borel-mble with $\E\abs{\phi(Y)} < \infty$ then $\forall \omega \in \Omega$, $E(\phi(Y)\given \mathcal{G})(\omega) = \int_{\R^d} \phi(y) \mu(\omega, dy)$ as($P$). \\
+
+
+\subsection*{Inequalities \& Miscellanea}
+For positive $a,b,p$, $(a+b)^p \le 2^p(a^p + b^p)$. \\\medskip
+
+\textbf{Markov's ineq}: if $X$ is a nonneg r.v.\@ and $a > 0$, then $P(X \ge a) \le \E(X)/a$. \\\medskip
+
+\textbf{H\"{o}lder's ineq}: If $1/p + 1/q = 1$, then for mble $f,g$, $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$. \\\medskip
+
+\textbf{Jensen's ineq}: $\forall r \in (0,q)$, $\phi(x) = x^{q/r}$ is convex $\implies \left[\E\abs{X}^q\right]^{1/q} \ge \left[\E\abs{X}^r\right]^{1/r}.$ \\ \medskip
+
+\textbf{Bayes rule}: $P(X \in A \given Y \in B) = \frac{P(Y \in B \given X \in A) P(X \in A)}{\sum_x P(Y \in B \given X = x) P(X = x)}.$ \\ \medskip
+
+
+
+\end{multicols*}
+\end{document}

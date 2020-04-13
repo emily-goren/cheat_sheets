@@ -1,0 +1,392 @@
+%\documentclass[10pt,landscape]{article}
+\documentclass[paper=a4,fontsize=2.73mm]{scrartcl}
+
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{amsmath,amssymb,amsthm}
+
+\linespread{0.5}
+
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\Prob}{P}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\trace}{tr}
+
+\newcommand\given[1][]{\:#1\vert\:}
+\newcommand{\ind}{\stackrel{\text{ind}}{\sim}}
+\newcommand{\iid}{\stackrel{\text{iid}}{\sim}}
+\newcommand{\eqd}{\stackrel{\text{d}}{=}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand\abs[1]{\left| #1 \right|}
+\newcommand\norm[1]{\left\lVert #1 \right\rVert}
+\newcommand\set[1]{\left\{\, #1 \,\right\}}
+
+\newcommand{\Norm}{\mathcal{N}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\brho}{\boldsymbol{\rho}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bGamma}{\boldsymbol{\Gamma}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bOmega}{\boldsymbol{\Omega}}
+
+% To make this come out properly in landscape mode, do one of the following
+% 1.
+%  pdflatex latexsheet.tex
+%
+% 2.
+%  latex latexsheet.tex
+%  dvips -P pdf  -t landscape latexsheet.dvi
+%  ps2pdf latexsheet.ps
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.05in,left=.05in,right=.1in,bottom=.1in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+	}
+
+% Turn off header and footer
+\pagestyle{empty}
+ 
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-2explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.01ex}
+
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+
+\raggedright
+
+\begin{multicols}{3}
+
+
+% multicol parameters
+% These lengths are set only within the two main columns
+%\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{.05pt}
+\setlength{\postmulticols}{.05pt}
+\setlength{\multicolsep}{.05pt}
+\setlength{\columnsep}{.05pt}
+
+\subsection*{Law of Total Probability}
+ If $A_1, A_2, \dots$ form a \emph{partition} of $\Omega$ and $B \in \Omega$, then $\Prob(B) = \sum_{n=1}^\infty\Prob(B \cup A_n) = \sum_{n=1}^\infty\Prob(B\given A_n)\Prob(A_n).$
+
+\subsection*{Bayes' Rule}
+\begin{itemize}
+	\item For $A,B\in\mathcal{F}$, \\
+$\Prob(A\given B) = \frac{\Prob(B\given A)P(A)}{\Prob(B)} = \frac{\Prob(B\given A)P(A)}{\Prob(B \given A)\Prob(A) + \Prob(B\given A^c)\Prob(A^c)}.$ 
+	\item For a partition $\set{A_1, A_2, \dots}$ and  $B \in \mathcal{F}$, \\
+$\Prob(A_i\given B) = \frac{\Prob(B\given A_i)P(A_i)}{\sum_{i=1}^\infty\Prob(B\given A_i)\Prob(A_i)}.$
+	\item For a pdf or pmf $p(\cdot)$, \\
+$f(\theta \given y) = \frac{f(y\given\theta)f(\theta)}{f(y)} =\frac{f(y\given\theta)f(\theta)}{\int f(y\given\theta)f(\theta)d\theta}.$
+\end{itemize}
+
+\subsection*{Bayesian Learning}
+If $Y_i \given \theta \iid p(y\given\theta)$, \\
+$p(\theta\given y_1, \dots, y_i) \propto p(y_i\given\theta)p(\theta\given y_1, \dots, y_{i-1}.$
+
+\subsection*{Prediction}
+\begin{align*}
+p(y^\ast \given y) 
+&= \int p(y^\ast, \theta \given y) d\theta = \int p(y^\ast \given y, \theta)p(\theta\given y) d\theta \\
+&= \int \underbrace{p(y^\ast \given \theta)}_{\text{model}}\underbrace{p(\theta\given y)}_{\text{posterior}} d\theta \quad (y^\ast \perp y).
+\end{align*}
+
+\subsection*{Point Estimation}
+    \begin{tabular}{|c|c|} \hline
+    Loss $L(\theta, \hat{\theta})$                           & $\hat{\theta}_\text{Bayes} = \argmin_{\hat{\theta}} \E\left[L(\theta, \hat{\theta})\given y\right]$ \\\hline
+    $(\theta- \hat{\theta})^2$                               & $\E(\theta \given y)$                                                                               \\
+    $\abs{\theta- \hat{\theta}}$                             & $\int_{\hat{\theta}_\text{Bayes}}^\infty p(\theta \given y)d\theta = 1/2$                           \\
+    $\lim_{\eps \to 0}I\left(\abs{\theta - \hat{\theta}} < \eps\right)$ & $\argmax_\theta p(\theta \given y)$                                                                  \\\hline
+    \end{tabular}
+
+\subsection*{Interval Estimation}
+A $100(1-\alpha)\%$ credible interval is any $(L, U)$ such that $1-\alpha = \int_L^U p(\theta \given y) d \theta.$
+\begin{itemize}
+	\item Equal-tailed: $\alpha/2 = \int_{-\infty}^L p(\theta\given y)d\theta = \int_U^\infty p(\theta \given y) d\theta$,
+	\item One-sided: $L = -\infty$ or $U = \infty$,
+	\item HPD: $p(L\given y) = p(U\given y)$ for a unimodal posterior (shortest).
+\end{itemize}
+
+\subsection*{Conjugate Priors}
+A prior $p(\theta)$ is conjugate if for $p(\theta) \in \mathcal{P}$ and $p(y\given\theta) \in \mathcal{F}$, then $p(\theta\given y) \in \mathcal{P}$. A prior is natural conjugate if the prior and likelihood have the same functional form. 
+\begin{itemize}
+	\item E.g., discrete prior $\Prob(\theta = \theta_i) = p_i$ where $\sum_{i=1}^I p_i = 1$, then $\Prob(\theta = \theta_i \given y) = \frac{p_i p(y\given\theta_i)}{\sum_{i'=1}^Ip_{i'}p(y\given\theta_{i'})}$, which is also discrete.
+	\item E.g., mixture of conjugate priors $\theta \sim \sum_{i=1}^I p_ip_i(\theta)$ where $\sum_{i=1}^I p_i=1$, then $\theta \given y \sim \sum_{i=1}^I p_i' p_i(\theta \given y)$ where $p_i' \propto p_i \int p(y\given\theta)p_i(\theta)d\theta$ and $p_i(\theta \given y) \propto p(y\given\theta)p_i(\theta)$.
+\end{itemize}
+
+\subsection*{Jeffreys Prior}
+Noninformative priors may not be so for transformations!
+Note that $\log\left( \frac{\theta}{1-\theta}\right) \sim \text{Beta}(1,1) \eqd \text{Unif}(0,1)$ implies $\theta \sim \text{Beta}(0,0)$. \\
+
+This motivates Jeffreys prior, which is invariant to parameter transformation, defined as $p(\theta) \propto \sqrt{\det\big(\mathcal{I}(\theta)\big)},$
+where $\mathcal{I}(\theta) = -\E_{y\given\theta}\left[ \frac{\partial^2}{\partial \theta^2} \log p(y\given\theta)\right]$.
+
+\subsection*{Normal Model (known variance)}
+For $Y_i \iid \Norm(\mu, s^2)$,
+\begin{itemize}
+	\item Jefferys prior (improper) $\mu \sim \text{Unif}(-\infty, \infty)$ gives $\mu \given y \sim \Norm(\bar{y}, s^2/n)$.
+	\item Natural conjugate prior $\mu \sim \Norm(m, C)$ gives $\mu \given y \sim \Norm(m', C')$ where
+	$C' = \left[ \frac{1}{C} + \frac{n}{s^2}\right]^{-1}$ and $m' = C'\left[ \frac{1}{C}m + \frac{n}{s^2}\bar{y} \right]$.
+	\item Note $\Norm(m, C) \to \text{Unif}(-\infty, \infty)$ as $C \to \infty$.
+\end{itemize}
+
+\subsection*{Normal Model (known mean)}
+For $Y_i \iid \Norm(m, \sigma^2)$,
+\begin{itemize}
+	\item Jefferys prior (improper) $p(\sigma^2) \propto 1/\sigma^2 \eqd \text{InvGam}(0,0)$ gives $\sigma^2\given y \sim \text{InvGam}\left(\frac{n}{2}, \frac{1}{2}\sum_{i=1}^n(y_i - m)^2\right)$.
+	\item Natural conjugate prior $\sigma^2 \sim \text{InvGam}(a,b)$ gives $\sigma^2\given y \sim \text{InvGam}\left(a + \frac{n}{2}, b + \frac{1}{2}\sum_{i=1}^n(y_i - m)^2\right)$.
+\end{itemize}
+
+
+\subsection*{Scaled Inv-$\chi^2$}
+\begin{itemize}
+	\item $\sigma^2 \sim \text{InvGam}(a,b) \eqd \text{Inv-}\chi^2(v,s^2)$ where  $a = v/2$ and $b = v s^2/2$ (equivalently, $v = 2a$ and $s^2 =b/a$).
+	\item Mean: $\frac{v s^2}{v - 2}$ for $v > 2$; Mode: $\frac{v s^2}{v + 2}$; Variance: $\frac{2v^2 (s^2)^2}{(v - 2)^2(v - 4)}$ for $v > 4$.
+\end{itemize}
+
+\subsection*{Location-scale $t$}
+\begin{itemize}
+	\item If $T \sim t_v$, then $X = m + sT \sim t_v(m, s^2)$.
+	\item $f(x) = \frac{\Gamma\left(\frac{v+1}{2}\right)}{\Gamma\left(\frac{v}{2}\right)\sqrt{v \pi s}} \left( 1 + \frac{1}{v}\left[\frac{x-m}{s}\right]^2\right)^{-\frac{v+1}{2}}, \quad x \in \R$.
+	\item  $t_v(m, s^2) \to \Norm(m, s^2)$ as $v \to \infty$.
+\end{itemize}
+
+\subsection*{Normal Inv-$\chi^2$}
+\begin{itemize}
+	\item If $\mu\given\sigma^2 \sim \Norm(m, \sigma^2/k)$ and $\sigma^2 \sim \text{Inv-}\chi^2(v, s^2)$, then
+	$p(\mu, \sigma^2) \propto (\sigma^2)^{-\frac{v+3}{2}} \exp\left[ -\frac{1}{2\sigma^2}\left(k(\mu-m)^2 + vs^2\right)\right]$.
+	\item Marginally, $\mu \sim t_v(m, s^2/k)$.
+\end{itemize}
+
+\subsection*{Normal model}
+For $Y_i \iid \Norm(\mu, \sigma^2)$,
+\begin{itemize}
+	\item Jefferys prior $p(\mu, \sigma^2) \propto (1/\sigma^2)^{3/2}$ (not often used).
+	\item Reference prior (improper) $p(\mu, \sigma^2) \propto 1/\sigma^2 \eqd \text{InvGam}(0,0)$ gives $\mu \given \sigma^2, y \sim \Norm(\bar{y}, \sigma^2/n)$ and
+	 $\sigma^2\given y \sim \text{Inv-}\chi^2\left(n-1, s^2\right)$. Marginally, $\mu\given y \sim t_{n-1}(\bar{y}, s^2/n)$.
+	\item Predictive $\int\int p(y^\ast\given \mu, \sigma^2 p(\mu\given\sigma^2 y)p(\sigma^2\given y)d\mu d\sigma^2$. Trick is to write $y^\ast = \mu + \eps$ where $\mu\given \sigma^2, y \sim \Norm(\bar{y}, \sigma^2/n)$ independent of $\eps\given \sigma^2, y \sim \Norm(0, \sigma^2)$. Then $y^\ast \given \sigma^2, y \sim \Norm(\bar{y}, \sigma^2(1+1/n))$ with $\sigma^2\given y \sim \text{Inv-}\chi^2(n-1,s^2)$ so that $y^\ast \given y \sim t_{n-1}(\bar{y}, s^2(1+1/n))$.
+	\item Natural conjugate prior $\mu\given \sigma^2 \sim \Norm(m, \sigma^2/k)$ and $\sigma^2 \sim \text{Inv-}\chi^2(v, s^2)$ gives $\mu\given \sigma^2, y \sim \Norm(m', \sigma^2/k')$ and $\sigma^2\given y \sim \text{Inv-}\chi^2(v', (s')^2)$ where $k' = k + n$, $v' = v + n$, $m' = \frac{km + n\bar{y}}{k'}$, and $v'(s')^2 = vs^2 + (n-1)s^2 + \frac{kn}{k'}(\bar{y} - m)^2$. Marginally, $\mu\given y \sim t_{v'}(m', (s')^2/k')$.
+\end{itemize}
+
+\subsection*{Multinomial}
+\begin{itemize}
+	\item ${Y} = (Y_1, \dots, Y_n) \sim \text{Multi}(n, {\pi})$ where $\sum_{i=1}^n\pi_i = 1$.
+	\item Multivariate pmf $f(y_1, \dots, y_n) = n!\prod_{i=1}^n\frac{\pi_i^{y_i}}{y_i!}$.
+	\item $\E(Y_i) = n\pi_i$; $\Var(Y_i) = n\pi_i(1-\pi_i)$; $ \Cov(Y_i, Y_{i'}) = -\pi_i\pi_{i'}$.
+	\item Marginally, $Y_i \sim \text{Bin}(n, \pi_i)$.
+\end{itemize}
+
+\subsection*{Dirichlet}
+\begin{itemize}
+	\item ${\pi} = (\pi_1, \dots, \pi_K) \sim \text{Dir}({a})$ where $a_k > 0 ~ \forall k = 1, \dots, K$.
+	\item Multivariate pdf $f(\pi_1, \dots, \pi_K) = \frac{1}{\text{Beta}({a})}\prod_{k=1}^K\pi_k^{a_k-1}$ where $\sum_{k=1}^J\pi_k = 1$ and $\text{Beta}({a}) = \frac{\prod_{k=1}^K\Gamma(a_k)}{\Gamma(a_0)}$ for $a_0 = \sum_{k=1}^K a_k$.
+	\item $\E(\pi_k) = a_k/a_0$; $ \Var(\pi_k) = \frac{a_k(a_0 - a_k)}{a_0^2(a_0 + 1)}$; $ \Cov(\pi_k, \pi_{k'}) = \frac{-a_ka_{k'}}{a_0^2(a_0+1)}$.
+	\item Marginally, $\pi_k \sim \text{Beta}(a_k, a_0 - a_k)$.
+\end{itemize}
+
+
+\subsection*{Multinomial model}
+\begin{itemize}
+	\item Conjugate prior $\pi \sim \text{Dir}(a)$ gives $p(\pi \given y) \sim \text{Dir}(a + y)$.
+	\item Jeffreys prior uses $a_k = 1/2 ~ \forall k$, possibly putting too much mass on rare categories.
+\end{itemize}
+
+
+\subsection*{MVN}
+\begin{itemize}
+	\item $p(y) = (2\pi)^{-k/2}\abs{\Sigma}^{-1/2}\exp\left[ -\frac{1}{2}(y-\mu)'\Sigma^{-1}(y-\mu)\right]$.
+	\item $\E(Y_k) = \mu_k$; $\Var(Y_k) = \Sigma_{kk}$; $\Cov(Y_k, Y_{k'}) = \Sigma_{kk'}$.
+	\item Marginally, $Y_k \sim \Norm(\mu_k, \Sigma_{kk})$.
+	\item If $\begin{pmatrix} Y_1 \\ Y_2 \end{pmatrix} \sim \Norm\left( \begin{pmatrix} \mu_1 \\ \mu_2 \end{pmatrix}, 
+	\begin{pmatrix} \Sigma_{11} & \Sigma_{12} \\ \Sigma_{21} & \Sigma_{22}\end{pmatrix}\right)$, then 
+	$Y_1 \given Y_2 = y_2 \sim \Norm(\mu_1 + \Sigma_{12}\Sigma_{22}^{-1}(y_2 - \mu_2), \Sigma_{11} - \Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21})$.
+	\item $\Sigma_{kk'} = 0 \implies Y_k \perp Y_{k'}$ and $\left[\Sigma^{-1}\right]_{kk'} = 0 \implies Y_k \perp Y_{k'} \given Y_i ~\forall i \ne k, k'.$
+\end{itemize}
+
+
+\subsection*{MVN model (unknown mean)}
+If $Y_i \iid \Norm(\mu, S)$, then
+\begin{itemize}
+	\item Default prior $\mu \sim \text{Unif}(-\infty, \infty)$ gives (when $n \ge K$)  $\mu\given y \sim \Norm(\bar{y}, S/n)$ where $\bar{y}$ has elements $\bar{y}_k = \frac{1}{n}\sum_{i=1}^n y_{ik}$.
+	\item Conjugate prior $\mu \sim \Norm(m, C)$ gives $\mu\given y \sim \Norm(m', C')$ where $C' = \left[C^{-1} + nS^{-1}\right]^{-1}$ and $m' = C'\left[C^{-1}m + nS^{-1}\bar{y}\right]$.
+\end{itemize}
+
+\subsection*{Inverse Wishart}
+\begin{itemize}
+	\item $\Sigma_{K\times K} \sim \text{InvWish}(v, W^{-1})$ for $v > K-1$ and positive definite $W$ if $p(W) \propto \frac{1}{2}\abs{W}^{v-K-1}\exp\left[-\frac{1}{2}\trace\left(W\Sigma^{-1}\right)\right]$.
+	\item $\E(\Sigma) = (v-K-1)^{-1}W$
+	\item Marginally, $\sigma^2_k = \Sigma_{kk} \sim \chi^2(v, W_{kk})$.
+	\item $W \sim \text{Wish}(v,S) \implies W^{-1} \sim \text{InvWish}(v, S^{-1})$.
+	\item Problematic as a prior: biases small variances upward.
+\end{itemize}
+
+\subsection*{Normal Inverse Wishart}
+\begin{itemize}
+	\item $\mu\given \Sigma \sim \Norm(m, \frac{1}{c}\Sigma)$ and $\Sigma \sim \text{InvWish}(v, W^{-1})$.
+	\item Marginally, $\mu \sim t_{v-K+1}(m, \frac{1}{c(v-K+1)}W)$.
+\end{itemize}
+
+\subsection*{MVN model}
+If $Y_i \iid \Norm(\mu, \Sigma)$,
+\begin{itemize}
+	\item Conjugate prior $\mu \given \Sigma \sim \Norm(m, \frac{1}{c}\Sigma)$ and $\Sigma \sim \text{InvWish}(v, W^{-1})$, that is,
+	$p(\mu, \Sigma) \propto \abs{\Sigma}^{-(\frac{v+K}{2} +1)}\exp\left[-\frac{1}{2}\trace\left(W\Sigma^{-1}\right) - \frac{c}{2}(\mu-m)'\Sigma^{-1}(\mu-m)\right]$,
+	gives a Normal Inverse Wishart posterior with parameters $c' = c_n$, $v' = v+n$, $m' = \frac{k}{k+n}m + \frac{n}{k+n}\bar{y}$, and $W' = W + S + \frac{kn}{k+n}(\bar{y}-m)(\bar{y}-m)'$ where $S = \sum_{i=1}^n (y_i - \bar{y})(y_i - \bar{y})'$.
+	\item Default priors: $\Sigma \sim \text{InvWish}(k+1, I)$ marginally puts Unif$(-1,1)$ on each correlation; $p(\mu, \Sigma) \propto \abs{\Sigma}^{-(K+1)/2}$ is a Normal Inverse Wishart where $c \to 0, v \to -1, \abs{W} \to 0$ gives $\mu\given\Sigma, y \sim \Norm(\bar{y}, \Sigma/n)$ and $\Sigma\given y \sim \text{InvWish}(n-1, S^{-1})$.
+\end{itemize}
+
+\subsection*{Normal Approximation to Posterior}
+For unimodal and roughly symmetric $p(\theta\given y)$, a Taylors expansion about the posterior mode $\hat{\theta}$ gives
+$\log p(\theta \given y) \approx \log p(\hat{\theta}\given y) - \frac{1}{2}(\theta - \hat{\theta})'\left[-\frac{d^2}{d\theta^2} \log p(\theta\given y)\right]_{\theta = \hat{\theta}}(\theta - \hat{\theta}),$
+that is $p(\theta\given y) \stackrel{d}{\approx}\Norm(\hat{\theta}, I(\hat{\theta})^{-1})$ where $I(\hat{\theta}) = -\frac{d^2}{d\theta^2} \log p(\theta)\bigg|_{\theta = \hat{\theta}} - \frac{d^2}{d\theta^2} \log p(\theta\given y)\bigg|_{\theta = \hat{\theta}}.$
+
+\subsection*{Convergence of Posterior}
+For $Y_i \iid p(y\given\theta_0)$,
+\begin{itemize}
+	\item if $\Theta$ is discrete and $\Prob(\theta = \theta_0) > 0$, then $\Prob(\theta = \theta_0 \given y) \to 1$ as $n \to \infty$.
+	\item if $\Theta$ is continuous and $A$ is a neighborhood around $\theta_0$ such that $\Prob(\theta \in A ) > 0$, then $\Prob(\theta = A \given y) \to 1$ as $n \to \infty$.
+\end{itemize}
+
+\subsection*{Consistency of Posterior Estimates}
+Use fact that $\hat{\theta}_{MLE} \stackrel{p}{\to} \theta_0$, meaning $\forall \eps > 0$, $\lim_{n\to\infty}\Prob\left( \abs{\hat{\theta} - \theta_0} < \eps\right) = 1.$
+
+\subsection*{What can go wrong?}
+\begin{itemize}
+	\item \emph{Unidentified parameters, parameters grows with $n$, aliasing, unbounded or heavy-tailed likelihoods}.
+	\item Improper posterior.
+	\item Prior excludes point of convergence.
+	\item Convergence to edge of parameter space (prior).
+	\item Wrong sampling distribution: posterior $p(\theta\given y)$ will to converge to the point that minimizes Kullback-Leibler divergence from true $f(y)$ where
+	$KL\left[ f(y) : p(y\given \theta) \right] = \E_Y\left[ \log\left(\frac{f(y)}{p(y\given\theta)}\right)\right] = \int\log\left(\frac{f(y)}{p(y\given\theta)}\right)f(y)dy.$
+\end{itemize}
+
+\subsection*{Hierarchical Models}
+\begin{align*}
+& y_i \ind p(y\given\theta_i), \quad \theta_i \iid p(\theta\given\phi), \quad \phi \sim p(\phi) \\
+\implies & 
+p(\theta,\phi\given y) \propto p(y\given \theta,\phi)p(\theta,\phi) \propto p(y\given \theta,\phi)p(\theta\given\phi)p(\phi).
+\end{align*}
+Can decompose joint posterior as $p(\theta,\phi\given y) = p(\theta \given \phi, y)p(\phi\given y),$ where
+$p(\theta \given \phi, y)  \propto \prod_{i=1}^n p(\theta_i\given\phi, y_i)$; 
+$p(\theta \given  y)  \propto p(y \given \phi)p(\theta)$;
+$p(y \given \phi) = \prod_{i=1}^n p(y_i\given\phi)$.
+
+Conditional independencies:
+$y_i \perp y_j \given \theta$; $ y_i \perp y_j \given \phi$; $\theta_i \perp \theta_j \given \phi$; $ \theta_i \perp \theta_j \given \phi, y$; $ y \perp \phi \given \theta$.
+
+\subsection*{Exchangeability}
+$Y_1, \dots, Y_n$ are exchangeable if $p(y_1, \dots, y_n)$ is invariant to permutation of indices (infinitely exchangeable if it holds for any given $n$).
+
+\subsection*{de Finetti's Theorem}
+A sequence of r.v.s are infinitely exchangeable iff $\forall n$,
+$p(y_1, \dots, y_n) = \int \prod_{i=1}^n p(y_i\given \theta)P(d\theta),$
+for some measure $P$ on $\theta$. If the dsn on $\theta$ has a density, can replace $P(d\theta)$ with $p(\theta)d\theta$.
+
+\subsection*{Beta-Binomial Hierarchical Model}
+\begin{itemize}
+	\item $y_i \ind \text{Bin}(n_i, \theta_i), ~ \theta_i \iid\text{Beta}(\alpha, \beta), ~ \alpha, \beta \sim p(\alpha, \beta)$.
+	\item Conditional posterior: $p(\theta \given \alpha, \beta, y) = \prod_{i=1}^n \text{Beta}(\alpha + y_i, ~ \beta + n_i - y_i)$.
+	\item Marginal posterior: $p(\alpha, \beta \given y) \propto p(y\given \alpha, \beta)p(\alpha, \beta)$ where $y_i\given \alpha \beta \ind \text{Beta-Binomial}(n_i, \alpha, \beta)$, that is 
+	$p(y\given\alpha,\beta) = \prod_{i=1}^n \frac{B(\alpha + y_i, \beta + n_i-y_i)}{B(\alpha, \beta)}.$
+	\item Interpretation: $\alpha$ prior successes, $\beta$ prior failures. Can parameterize as $\mu = \frac{\alpha}{\alpha + \beta}$ prior expectation, $\eta = \alpha + \beta$ prior sample size. Transform to real line $\log(\mu/[1-\mu]) = \log(\alpha/\beta)$ and $\log\eta$ so we can use Beta$(20,30)$ and Log$\Norm(0, 3^2$ priors for example (assume they are independent).
+	\item Priors for $\alpha$ and $\beta$: warning! $p(\log(\alpha/\beta), \log(\alpha + \beta)) \propto 1$ gives an improper posterior! And $\sim \text{Unif}( [-10^{10}, 10^{10}]\times [-10^{10}, 10^{10}])$ is very informative. Can use $\propto \alpha\beta(\alpha + \beta)^{-5/2}$ which leads to a proper posterior and is equivalent to $p(\alpha,\beta) \propto (\alpha + \beta)^{-5/2}$.
+\end{itemize}
+
+\subsection*{Normal Hierarchical Model}
+\begin{itemize}
+	\item $y_{ij} \ind \Norm(\theta_i, \sigma^2), ~ \theta_i \iid \Norm(\mu, \tau^2), \quad \mu, \tau^2 \sim p(\mu, \tau)$.
+	\item For known $\sigma^2 = s^2$, assume $p(\mu, \tau) \propto p(\mu\given\tau)p(\tau) \propto p(\tau)$, that is, assume improper uniform on $\mu$. Then the posterior is
+	\begin{align*}
+	&p(\tau\given y) \propto p(\tau) V^{1/2}_\mu \prod_{i=1}^I(s_i^2 + \tau^2)^{-1/2}\exp\left[ - \frac{(\bar{y}_{i\cdot}-\hat{\mu})^2}{2(s_i^2-\tau^2)}\right], \\
+	&\mu\given\tau,y \sim \Norm(\hat{\mu}, V_\mu), \quad\quad \theta_i \given \mu, \tau, y \sim \Norm(\hat{\theta}_i, V_i),
+	\end{align*}
+	where $V^{-1}_\mu = \sum_{i=1}^I \frac{1}{s_i^2+\tau^2}$, $V_i^{-1} = 1/s_i^2 + 1/\tau^2$, $\hat{\mu} = V_\mu\left(\sum_{i=1}^I \frac{\bar{y}_{\cdot i}}{s_i^2 + \tau^2}\right)$, and $\hat{\theta}_i = V_i \left( \frac{\bar{y}_{i\cdot}}{s_i^2} + \frac{\mu}{\tau^2}\right)$.
+	\item Other priors: $\theta_i \sim t_v(\mu, \tau^2$ for heavy tails, $\theta_i \sim \text{Laplace}(\mu, \tau^2)$ gives peak at zero, $\pi\delta_0 + (1-\pi)\Norm(\mu, \tau^2)$ for a point mass at zero.
+	\item Decomp $p(\theta, \mu, \tau\given y) = p(\theta\given \mu, \tau, y)p(\mu\given \tau,y)p(\tau\given y)$.
+	\item For unknown $\sigma^2$, default priors are half-Cauchy on the data-level sd, $\sigma \sim \text{Ca}^+(0,C)$ or data-level variance default $p(\sigma^2) \propto 1/\sigma^2$. Use $\tau \sim \text{Ca}^+(0,C)$ or $\tau \sim \text{Unif}(0,C)$ if $>5$ reps.
+\end{itemize}
+
+\subsection*{Model Check}
+\begin{itemize}
+	\item Prior sensitivity analysis.
+	\item Posterior predictive checks using $p(y^\text{rep} \given y) = \int p(y^\text{rep}\given \theta) p(\theta \given y) d\theta$. Compare replicated data to observed data or compute posterior $p$-value $p_B = \Prob\left( T(y^\text{rep}, \theta) \ge T(y, \theta) \given y\right) \approx \frac{1}{J} \sum_{j=1}^J I\left(T(y^{\text{rep},j}, \theta^{(j)}) \ge T(y, \theta^{(j)}) \right)$.
+\end{itemize}
+
+\subsection*{Hypothesis Testing}
+Suppose $y \sim p(y\given \theta)$.
+\begin{itemize}
+	\item All simple ($H_j: \theta = \theta_j ~\forall j$): treat as discrete prior on $\theta_j$: $\Prob(\theta = \theta_j) = p_j$. Posterior is then 
+	$\Prob(\theta = \theta_j\given y) = \frac{p_j p(y\given\theta_j)}{\sum_k p_k p(y\given \theta_k)}.$
+	\item All composite ($H_j: \theta \in (E_{j-1}, E_j] ~\forall j$): just find area under the curve $\Prob(H_j \given y) = \int_{E_{j-1}}^{E_j} p(\theta\given y) d\theta$.
+	\item Mixed: use $p(H_j\given y) \propto p(y\given H_j)p(H_j)$. For simple $H_j$, $p(y\given H_j) = p(y\given \theta_j$ ie $\theta \given H_j \sim \delta_{\theta_j}$. For composite $H_j$, $p(y\given H_j) = \int p(y\given \theta)p(\theta\given H_j)d\theta$ is the marginal likelihood and $p(\theta\given H_j)$ is the prior for $\theta$ when $H_j$ is true.
+\end{itemize}
+
+\subsection*{Posterior and Posterior Predictive Propriety}
+\begin{itemize}
+	\item Tonell's Theorem: if $\mathcal{X}, \mathcal{Y}$ are $\sigma$-finite measure spaces and $f$ is nonnegative and measurable, then $\int_\mathcal{X}\int_\mathcal{Y} f(x,y)dydx = \int_\mathcal{Y}\int_\mathcal{X} f(x,y)dxdy.$
+	\item Proper prior $+$ discrete data $\implies$ proper posterior.
+	\item Proper prior $+$ continuous data $\implies$ almost surely proper posterior.
+	\item Improper prior $\implies$ prior predictive $p(y) = \int p(y\given\theta)p(\theta)d\theta$ is improper too.
+\end{itemize}
+
+
+\subsection*{Bayes Factor}
+\begin{itemize}
+	\item $p(H_0\given y) = \frac{p(y\given H_0)}{p(y\given H_0)p(H_0) + p(y\given H_1)p(H_1)} = \frac{1}{1 + \frac{p(y\given H_1)p(H_1)}{p(y\given H_0)p(H_0)}}.$
+	\item $BF(H_1: H_0) = \frac{p(y\given H_1)}{p(y\given H_0)} = \frac{1}{BF(H_0: H_1)}$.
+	\item Noninformative prior $\implies BF(H_0: H_1) \to \infty$.
+	\item For $H_0: \theta = \theta_0$ vs $H_1: \theta \ne \theta_0$, $BF(H_0: H_1) = \frac{p(y\given\theta_0)}{\int p(y\given\theta)p(\theta\given H_1)d\theta}$.
+\end{itemize}
+
+\subsection*{LRT}
+$H_0: \theta \in \Theta_0$ vs $H_1: \theta \in \Theta_0^c$. $-2\log\left( \frac{L(\hat{\theta}_{0,MLE})}{L(\hat{\theta}_{MLE})}\right) \stackrel{d}{\to}\chi^2_{\Delta \dim}$.
+
+\subsection*{Jeffrey-Lindley Paradox}
+Bayesian and LRT disagree, usually when small effect size, large $n$, precise $H_0$, diffuse $H_1$.
+
+\newpage
+
+\end{multicols}
+\end{document}
